@@ -1,4 +1,5 @@
 from game_object import GameObject
+from pubsub import pub
 
 class GameLogic:
     def __init__(self):
@@ -16,9 +17,11 @@ class GameLogic:
         self.next_id += 1
         self.game_objects[obj.id] = obj
 
+        pub.sendMessage("create", game_object=obj)
+
     def load_world(self):
-        self.create_object("cube", [-2, 0, 0])
-        self.create_object("cube", [2, 0, 0])
+        self.create_object("cube", [-2, 0, -10])
+        self.create_object("cube", [2, 0, -10])
 
     def get_property(self, key):
         if key in self.properties:
