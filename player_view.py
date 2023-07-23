@@ -29,7 +29,8 @@ class PlayerView:
         global clicks
         global clicks_texture
         clicks += 1
-        img = pygame.font.SysFont("Arial", 25).render(_("Clicks: ")+str(clicks), True, (255, 0, 0), (255, 255, 0))
+        img = pygame.font.SysFont("Arial", 25).render(_("Clicks: ")+str(clicks), True, (0, 255, 0), (0, 0, 0, 0))
+
 
         w, h = img.get_size()
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
@@ -203,8 +204,13 @@ class PlayerView:
         glEnable(GL_TEXTURE_2D)
         glBindTexture(GL_TEXTURE_2D, clicks_texture)
 
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+        glClearColor(0.0, 0.0, 0.0, 1.0)
+
         glBegin(GL_QUADS)
-        glColor3f(0.0, 1.0, 0.0)
+        glColor4f(0.0, 1.0, 0.0, 1.0)
         glTexCoord2f(0.0, 1.0)
         glVertex2f(0, self.window_height)
         glTexCoord2f(1.0, 1.0)
@@ -216,6 +222,8 @@ class PlayerView:
         glEnd()
 
         glDisable(GL_TEXTURE_2D)
+
+        glDisable(GL_BLEND)
 
         glEnable(GL_DEPTH_TEST)
         glDepthMask(GL_TRUE)
