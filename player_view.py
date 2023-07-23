@@ -42,26 +42,7 @@ class PlayerView:
         glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         data = pygame.image.tostring(img, "RGBA", 1)  # type: ignore
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data)
-
-    def prepare_3d(self):
-  
-        glViewport(0, 0, self.window_width, self.window_height)
-
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        gluPerspective(self.field_of_view, self.aspect_ratio, self.near_distance, self.far_distance)
-
-        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)  # type: ignore
-
-
-        glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()
-        
-        glEnable(GL_COLOR_MATERIAL)
-        glDepthFunc(GL_LESS)
-        glEnable(GL_DEPTH_TEST)
-
-        
+    
     def tick(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -90,11 +71,13 @@ class PlayerView:
                     self.paused = not self.paused
                     pygame.mouse.set_pos(self.viewCenter)
 
+        # If Not Paused Do This
         if not self.paused:
             glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)  # type: ignore
             glMatrixMode(GL_MODELVIEW)
             glLoadIdentity()
 
+            self.prepare_3d()
             self.display()
 
             pygame.display.flip()
@@ -102,7 +85,7 @@ class PlayerView:
 
     def display(self):
         glInitNames()
-        self.prepare_3d()
+
         for id in self.view_objects:
             self.view_objects[id].display()
 
@@ -137,9 +120,9 @@ class PlayerView:
         self.far_distance = 100.0
 
 
-        self.reset_opengl()
+        self.prepare_3d()
 
-    def reset_opengl(self):
+    def prepare_3d(self):
         glViewport(0, 0, self.window_width, self.window_height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
