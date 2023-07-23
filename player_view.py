@@ -6,6 +6,8 @@ from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
+import numpy
+
 class PlayerView:
     def __init__(self, game_logic):
         self.game_logic = game_logic
@@ -22,6 +24,10 @@ class PlayerView:
                 self.game_logic.set_property("quit", True)
                 return
             
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                self.handle_click(pos)
+            
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)  # type: ignore
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
@@ -32,6 +38,8 @@ class PlayerView:
         pygame.time.wait(10)
 
     def display(self):
+        glInitNames()
+
         for id in self.view_objects:
             self.view_objects[id].display()
 
@@ -65,3 +73,46 @@ class PlayerView:
         glEnable(GL_COLOR_MATERIAL)
         glDepthFunc(GL_LESS)
         glEnable(GL_DEPTH_TEST)
+
+    def handle_click(self, pos):
+        windowX = pos[0]
+        windowY = self.window_height - pos[1]
+
+        glSelectBuffer(20)
+        glRenderMode(GL_SELECT)
+
+        glMatrixMode(GL_PROJECTION)
+        glPushMatrix()
+        glLoadIdentity()
+
+        gluPickMatrix(windowX, windowY, 20, 20, glGetIntegerv(GL_VIEWPORT))
+        gluPerspective(self.field_of_view, self.aspect_ratio, self.near_distance, self.far_distance)
+
+        glMatrixMode(GL_MODELVIEW)
+        self.display()
+
+        glMatrixMode(GL_PROJECTION)
+        glPopMatrix()
+
+        buffer = glRenderMode(GL_RENDER)
+
+        objects = []
+        for record in buffer:
+            min_depth, max_depth, name = record
+            objects += name
+
+        if not objects:
+            return
+        
+        camera = numpy.linalg.inv(glGetFloatv(GL_MODELVIEW_MATRIX))
+        camera = camera[3][0:3]
+
+        closest = None
+
+        for id in objects:
+            obj_pos = self.view_objects[id].game_object.position
+
+            if not closest or numpy.linalg.norm(obj_pos - camera) < numpy.linalg.norm(closest - camera):
+                closest = self.view_objects[id].game_object
+
+        closest.clicked()
