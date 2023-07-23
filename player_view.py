@@ -1,11 +1,11 @@
 import pygame
 from pubsub import pub
 from view_cube import CubeView
+from view_sphere import SphereView
 from pygame.locals import *
-
 from OpenGL.GL import *
 from OpenGL.GLU import *
-
+import random
 import numpy
 
 class PlayerView:
@@ -27,6 +27,18 @@ class PlayerView:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 self.handle_click(pos)
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    self.game_logic.set_property("quit", True)
+                    return
+                
+                if event.key == pygame.K_SPACE:
+                    x = random.uniform(-10, 10)  # Generate a random number between -10 and 10
+                    y = random.uniform(-10, 10)
+                    z = random.uniform(-10, 10)
+                    self.game_logic.create_object("sphere", [x, y, -10], "rotating")
             
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)  # type: ignore
         glMatrixMode(GL_MODELVIEW)
@@ -45,7 +57,10 @@ class PlayerView:
 
     def new_game_object(self, game_object):
         if game_object.kind == "cube":
-            self.view_objects[game_object.id] = CubeView(game_object) 
+            self.view_objects[game_object.id] = CubeView(game_object)
+
+        if game_object.kind == "sphere":
+            self.view_objects[game_object.id] = SphereView(game_object) 
 
     def setup(self):
         pygame.init()
@@ -96,6 +111,10 @@ class PlayerView:
 
         buffer = glRenderMode(GL_RENDER)
 
+        if buffer is None:
+            print("Buffer is None")
+            return
+
         objects = []
         for record in buffer:
             min_depth, max_depth, name = record
@@ -114,5 +133,9 @@ class PlayerView:
 
             if not closest or numpy.linalg.norm(obj_pos - camera) < numpy.linalg.norm(closest - camera):
                 closest = self.view_objects[id].game_object
+
+        if closest is None:
+            print("No closest object found")
+            return
 
         closest.clicked()
