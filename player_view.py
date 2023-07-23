@@ -68,6 +68,7 @@ class PlayerView:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 self.handle_click(pos)
+                self.user_clicked()
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
