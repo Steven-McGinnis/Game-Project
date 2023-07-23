@@ -16,7 +16,6 @@ class PlayerView:
         self.game_logic = game_logic
         self.view_objects = {}
         
-        
         pub.subscribe(self.new_game_object, "create")
 
         self.setup()
@@ -30,13 +29,14 @@ class PlayerView:
         global clicks
         global clicks_texture
         clicks += 1
-        text_img = pygame.font.SysFont("Arial", 25).render(_("Clicks: ")+str(clicks), True, (0, 255, 0), (255, 255, 0))
-        w, h = 128, 128  # Adjust the size accordingly
-        img = pygame.Surface((w, h))
-        img.blit(text_img, ((w - text_img.get_width()) // 2, (h - text_img.get_height()) // 2))
-        ...
+        img = pygame.font.SysFont("Arial", 25).render(_("Clicks: ")+str(clicks), True, (0, 255, 0), (255, 255, 0))
+        w, h = img.get_size()
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+        glBindTexture(GL_TEXTURE_2D, clicks_texture)
+        glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         data = pygame.image.tostring(img, "RGBA", 1)  # type: ignore
-
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data)
 
     def prepare_3d(self):
   
@@ -202,16 +202,15 @@ class PlayerView:
         glBindTexture(GL_TEXTURE_2D, clicks_texture)
 
         glBegin(GL_QUADS)
-
-
+        glColor3f(0.0, 1.0, 0.0)
         glTexCoord2f(0.0, 1.0)
-        glVertex2f(0, self.window_height - 50)
+        glVertex2f(0, 0)
         glTexCoord2f(1.0, 1.0)
-        glVertex2f(200, self.window_height - 50)
+        glVertex2f(200, 0)
         glTexCoord2f(1.0, 0.0)
-        glVertex2f(200, self.window_height)
+        glVertex2f(200, 50)
         glTexCoord2f(0.0, 0.0)
-        glVertex2f(0, self.window_height)
+        glVertex2f(0, 50)
 
         glEnd()
 
