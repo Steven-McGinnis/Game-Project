@@ -29,7 +29,8 @@ class PlayerView:
         global clicks
         global clicks_texture
         clicks += 1
-        img = pygame.font.SysFont("Arial", 25).render(_("Clicks: ")+str(clicks), True, (0, 255, 0), (255, 255, 0))
+        img = pygame.font.SysFont("Arial", 25).render(_("Clicks: ")+str(clicks), True, (255, 0, 0), (255, 255, 0))
+
         w, h = img.get_size()
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
         glBindTexture(GL_TEXTURE_2D, clicks_texture)
