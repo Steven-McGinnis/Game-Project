@@ -189,7 +189,7 @@ class PlayerView:
         closest.clicked()
 
     def render_hud(self):
-        glDisable(GL_DEPTH_TEST)  # Disable depth testing
+        glDisable(GL_DEPTH_TEST)
         glDepthMask(GL_FALSE)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
@@ -204,17 +204,16 @@ class PlayerView:
         glBegin(GL_QUADS)
         glColor3f(0.0, 1.0, 0.0)
         glTexCoord2f(0.0, 1.0)
-        glVertex2f(0, 0)
+        glVertex2f(0, self.window_height)
         glTexCoord2f(1.0, 1.0)
-        glVertex2f(200, 0)
+        glVertex2f(200, self.window_height)
         glTexCoord2f(1.0, 0.0)
-        glVertex2f(200, 50)
+        glVertex2f(200, self.window_height - 50)
         glTexCoord2f(0.0, 0.0)
-        glVertex2f(0, 50)
-
+        glVertex2f(0, self.window_height - 50)
         glEnd()
 
         glDisable(GL_TEXTURE_2D)
 
-        glEnable(GL_DEPTH_TEST)  # Re-enable depth testing
+        glEnable(GL_DEPTH_TEST)
         glDepthMask(GL_TRUE)
