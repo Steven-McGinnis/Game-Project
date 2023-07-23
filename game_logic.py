@@ -27,12 +27,14 @@ class GameLogic:
         return obj
 
     def load_world(self):
-        # self.create_object("cube", [-2, 0, -10], "rotating")
-        # obj = self.create_object("cube", [2, 0, -10], "rotating")
+        self.create_object("cube", [-2, 0, -10], "rotating")
+        obj = self.create_object("cube", [2, 0, -10], "rotating")
+        self.create_object("billboard_cube", [-2, 5, -10], "rotating")
+        self.create_object("sphere", [0, 0, -10],"standard")
         # obj.y_rotation = 45
-        # self.create_object("sphere", [0, 0, -10],"standard")
-        # self.create_object("floor", [0, 0, -20], "standard")
-        self.create_object("billboard_cube", [-2, 0, -10], "rotating")
+
+        self.create_object("floor", [0, 0, -20], "standard")
+        
 
     def get_property(self, key):
         if key in self.properties:

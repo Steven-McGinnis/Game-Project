@@ -1,5 +1,8 @@
-from OpenGL.GL import *
+# pylint: disable=wildcard-import
+from OpenGL.GL import * # noqa
 from OpenGL.GLU import *
+# pylint: enable=wildcard-import
+
 from view_object import ViewObject
 
 class CylinderView(ViewObject):

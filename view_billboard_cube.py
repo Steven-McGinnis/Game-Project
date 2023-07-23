@@ -1,10 +1,10 @@
 import pygame
-from OpenGL.GL import *
-from OpenGL.GLU import *
+from OpenGL.GL import * # nosec
+from OpenGL.GLU import * # nosec
 from view_object import ViewObject
 
 class BillboardCubeView(ViewObject):
-    def __init__(self, game_object):  # accept game_object as argument
+    def __init__(self, game_object):
         super().__init__(game_object) 
 
         self.front_texture = self.create_texture("Front")
