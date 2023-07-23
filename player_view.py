@@ -6,6 +6,7 @@ from view_cube import CubeView
 from view_floor import FloorView
 from view_sphere import SphereView
 from view_billboard_cube import BillboardCubeView
+from localize import _
 import numpy
 import pygame
 import random
@@ -14,6 +15,7 @@ class PlayerView:
     def __init__(self, game_logic):
         self.game_logic = game_logic
         self.view_objects = {}
+        
         
         pub.subscribe(self.new_game_object, "create")
 
@@ -28,14 +30,13 @@ class PlayerView:
         global clicks
         global clicks_texture
         clicks += 1
-        img = pygame.font.SysFont("Arial", 25).render("Clicks: "+str(clicks), True, (0, 255, 0), (255, 255, 0))
-        w, h = img.get_size()
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
-        glBindTexture(GL_TEXTURE_2D, clicks_texture)
-        glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-        glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        text_img = pygame.font.SysFont("Arial", 25).render(_("Clicks: ")+str(clicks), True, (0, 255, 0), (255, 255, 0))
+        w, h = 128, 128  # Adjust the size accordingly
+        img = pygame.Surface((w, h))
+        img.blit(text_img, ((w - text_img.get_width()) // 2, (h - text_img.get_height()) // 2))
+        ...
         data = pygame.image.tostring(img, "RGBA", 1)  # type: ignore
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data)
+
 
     def prepare_3d(self):
   
