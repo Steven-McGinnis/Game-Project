@@ -18,6 +18,9 @@ class PlayerView:
         
         pub.subscribe(self.new_game_object, "create")
 
+        self.paused = False
+        self.camera_angle = 0.0
+
         self.setup()
         global clicks_texture
         global clicks
@@ -82,14 +85,20 @@ class PlayerView:
                     y = random.uniform(-10, 10)
                     z = random.uniform(-10, 10)
                     self.game_logic.create_object("sphere", [x, y, -10], "rotating")
-            
-        glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()
 
-        self.display()
+                if event.key == pygame.K_p:
+                    self.paused = not self.paused
+                    pygame.mouse.set_pos(self.viewCenter)
 
-        pygame.display.flip()
-        pygame.time.wait(10)
+        if not self.paused:
+            glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)  # type: ignore
+            glMatrixMode(GL_MODELVIEW)
+            glLoadIdentity()
+
+            self.display()
+
+            pygame.display.flip()
+            pygame.time.wait(10)
 
     def display(self):
         glInitNames()
@@ -118,6 +127,7 @@ class PlayerView:
 
         self.window_width = 800
         self.window_height = 600
+        self.viewCenter = (self.window_width // 2, self.window_height // 2)
 
         pygame.display.set_mode((self.window_width, self.window_height), DOUBLEBUF|OPENGL)
 
