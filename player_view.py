@@ -14,10 +14,47 @@ class PlayerView:
     def __init__(self, game_logic):
         self.game_logic = game_logic
         self.view_objects = {}
-
+        
         pub.subscribe(self.new_game_object, "create")
 
         self.setup()
+        global clicks_texture
+        global clicks
+        clicks = -1
+        clicks_texture = glGenTextures(1)
+        self.user_clicked();
+
+    def user_clicked(self):
+        global clicks
+        global clicks_texture
+        clicks += 1
+        img = pygame.font.SysFont("Arial", 25).render("Clicks: "+str(clicks), True, (0, 255, 0), (255, 255, 0))
+        w, h = img.get_size()
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+        glBindTexture(GL_TEXTURE_2D, clicks_texture)
+        glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        data = pygame.image.tostring(img, "RGBA", 1)  # type: ignore
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data)
+
+    def prepare_3d(self):
+  
+        glViewport(0, 0, self.window_width, self.window_height)
+
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        gluPerspective(self.field_of_view, self.aspect_ratio, self.near_distance, self.far_distance)
+
+        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)  # type: ignore
+
+
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
+        
+        glEnable(GL_COLOR_MATERIAL)
+        glDepthFunc(GL_LESS)
+        glEnable(GL_DEPTH_TEST)
+
         
     def tick(self):
         for event in pygame.event.get():
@@ -42,7 +79,6 @@ class PlayerView:
                     z = random.uniform(-10, 10)
                     self.game_logic.create_object("sphere", [x, y, -10], "rotating")
             
-        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)  # type: ignore
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 
@@ -53,9 +89,11 @@ class PlayerView:
 
     def display(self):
         glInitNames()
-
+        self.prepare_3d()
         for id in self.view_objects:
             self.view_objects[id].display()
+
+        self.render_hud()
 
     def new_game_object(self, game_object):
         if game_object.kind == "cube":
@@ -102,7 +140,7 @@ class PlayerView:
         windowX = pos[0]
         windowY = self.window_height - pos[1]
 
-        glSelectBuffer(20)
+        glSelectBuffer(100)
         glRenderMode(GL_SELECT)
 
         glMatrixMode(GL_PROJECTION)
@@ -148,3 +186,35 @@ class PlayerView:
             return
 
         closest.clicked()
+
+    def render_hud(self):
+        glDisable(GL_DEPTH_TEST)  # Disable depth testing
+        glDepthMask(GL_FALSE)
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        gluOrtho2D(0, self.window_width, 0, self.window_height)
+
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
+
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, clicks_texture)
+
+        glBegin(GL_QUADS)
+
+
+        glTexCoord2f(0.0, 1.0)
+        glVertex2f(0, self.window_height - 50)
+        glTexCoord2f(1.0, 1.0)
+        glVertex2f(200, self.window_height - 50)
+        glTexCoord2f(1.0, 0.0)
+        glVertex2f(200, self.window_height)
+        glTexCoord2f(0.0, 0.0)
+        glVertex2f(0, self.window_height)
+
+        glEnd()
+
+        glDisable(GL_TEXTURE_2D)
+
+        glEnable(GL_DEPTH_TEST)  # Re-enable depth testing
+        glDepthMask(GL_TRUE)
