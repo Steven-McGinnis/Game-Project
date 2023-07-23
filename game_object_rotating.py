@@ -10,7 +10,7 @@ class GameObjectRotating(GameObject):
         if self.allow_rotation:
             self.y_rotation += 0.5
             self.x_rotation += 0.5
-            self.z_rotation += 0.5
+            # self.z_rotation += 0.5
 
     def clicked(self):
         self.allow_rotation = not self.allow_rotation

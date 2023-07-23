@@ -1,12 +1,14 @@
-import pygame
-from pubsub import pub
-from view_cube import CubeView
-from view_sphere import SphereView
-from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
-import random
+from pubsub import pub
+from pygame.locals import *
+from view_cube import CubeView
+from view_floor import FloorView
+from view_sphere import SphereView
+from view_billboard_cube import BillboardCubeView
 import numpy
+import pygame
+import random
 
 class PlayerView:
     def __init__(self, game_logic):
@@ -60,7 +62,14 @@ class PlayerView:
             self.view_objects[game_object.id] = CubeView(game_object)
 
         if game_object.kind == "sphere":
-            self.view_objects[game_object.id] = SphereView(game_object) 
+            self.view_objects[game_object.id] = SphereView(game_object)
+
+        if game_object.kind == "floor":
+            texture_file = "./textures/grassSeamless.png"  # Replace with the path to your texture file
+            self.view_objects[game_object.id] = FloorView(game_object, texture_file)
+
+        if game_object.kind == "billboard_cube":
+            self.view_objects[game_object.id] = BillboardCubeView(game_object)
 
     def setup(self):
         pygame.init()
@@ -131,7 +140,7 @@ class PlayerView:
         for id in objects:
             obj_pos = self.view_objects[id].game_object.position
 
-            if not closest or numpy.linalg.norm(obj_pos - camera) < numpy.linalg.norm(closest - camera):
+            if not closest or numpy.linalg.norm(obj_pos - camera) < numpy.linalg.norm(closest.position - camera):
                 closest = self.view_objects[id].game_object
 
         if closest is None:
