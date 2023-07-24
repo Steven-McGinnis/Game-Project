@@ -1,8 +1,9 @@
 class GameObject:
-    def __init__(self, kind, id, position):
+    def __init__(self, kind, id, position, size):
         self.position = position
         self.id = id
         self.kind = kind
+        self.size = size
         self.x_rotation = 0
         self.y_rotation = 0
         self.z_rotation = 0
@@ -54,6 +55,14 @@ class GameObject:
     @z_rotation.setter
     def z_rotation(self, value):
         self._z_rotation = value
+
+    @property
+    def size(self):
+        return self._size
+    
+    @size.setter
+    def size(self, value):
+        self._size = value
 
     def tick(self):
         pass

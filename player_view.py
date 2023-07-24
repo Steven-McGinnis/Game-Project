@@ -5,6 +5,7 @@ from pygame.locals import *
 from view_cube import CubeView
 from view_floor import FloorView
 from view_sphere import SphereView
+from game_object import GameObject
 from view_billboard_cube import BillboardCubeView
 from localize import _
 from localize import Localize
@@ -12,12 +13,13 @@ import numpy
 import pygame
 import random
 
+
 class PlayerView:
     def __init__(self, game_logic):
         self.game_logic = game_logic
         self.view_objects = {}
         self.click_log = []
-        
+
         pub.subscribe(self.new_game_object, "create")
 
         self.paused = False
@@ -28,9 +30,8 @@ class PlayerView:
         global clicks
         clicks = -1
         clicks_texture = glGenTextures(1)
-        self.user_clicked();
+        self.user_clicked()
 
-    
     # Setup the Window
     def setup(self):
         pygame.init()
@@ -39,13 +40,15 @@ class PlayerView:
         self.window_height = 600
         self.viewCenter = (self.window_width // 2, self.window_height // 2)
 
-        pygame.display.set_mode((self.window_width, self.window_height), DOUBLEBUF|OPENGL)
+        pygame.display.set_mode(
+            (self.window_width, self.window_height), DOUBLEBUF | OPENGL
+        )
 
         self.field_of_view = 60
         self.aspect_ratio = self.window_width / self.window_height
         self.near_distance = 0.1
         self.far_distance = 100.0
-        
+
         self.prepare_3d()
         self.viewMatrix = glGetFloatv(GL_MODELVIEW_MATRIX)
 
@@ -53,7 +56,9 @@ class PlayerView:
         global clicks
         global clicks_texture
         clicks += 1
-        img = pygame.font.SysFont("Arial", 25).render(_("Clicks :")+str(clicks), True, (0, 255, 0), (0, 0, 0, 0))
+        img = pygame.font.SysFont("Arial", 25).render(
+            _("Clicks :") + str(clicks), True, (0, 255, 0), (0, 0, 0, 0)
+        )
 
         w, h = img.get_size()
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
@@ -61,8 +66,10 @@ class PlayerView:
         glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
         glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         data = pygame.image.tostring(img, "RGBA", 1)  # type: ignore
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data)
-    
+        glTexImage2D(
+            GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data
+        )
+
     def tick(self):
         mouseMove = (0, 0)
         for event in pygame.event.get():
@@ -70,7 +77,7 @@ class PlayerView:
                 pygame.quit()
                 self.game_logic.set_property("quit", True)
                 return
-            
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 self.handle_click(pos)
@@ -81,17 +88,21 @@ class PlayerView:
                     pygame.quit()
                     self.game_logic.set_property("quit", True)
                     return
-                
+
                 if event.key == pygame.K_SPACE:
-                    x = random.uniform(-10, 10)  # Generate a random number between -10 and 10
+                    x = random.uniform(
+                        -10, 10
+                    )  # Generate a random number between -10 and 10
                     y = random.uniform(-10, 10)
                     z = random.uniform(-10, 10)
-                    self.game_logic.create_object("sphere", [x, y, -10], "rotating")
+                    self.game_logic.create_object(
+                        GameObject, "sphere", [x, y, -10], [1.0, 1.0, 1.0]
+                    )
 
                 if event.key == pygame.K_p:
                     self.paused = not self.paused
                     pygame.mouse.set_pos(self.viewCenter)
-            
+
             if not self.paused:
                 if event.type == pygame.MOUSEMOTION:
                     mouseMove = [event.pos[i] - self.viewCenter[i] for i in range(2)]
@@ -107,7 +118,7 @@ class PlayerView:
 
             glPushMatrix()
             glLoadIdentity()
-            
+
             if keypress[pygame.K_w]:
                 glTranslatef(0, 0, 0.1)
             if keypress[pygame.K_s]:
@@ -118,7 +129,6 @@ class PlayerView:
                 glTranslatef(-0.1, 0, 0)
 
             glRotatef(mouseMove[0] * 0.1, 0.0, 1.0, 0.0)
-            
 
             glMultMatrixf(self.viewMatrix)
             self.viewMatrix = glGetFloatv(GL_MODELVIEW_MATRIX)
@@ -128,7 +138,7 @@ class PlayerView:
 
             self.enable_lighting()
 
-            glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT) # type: ignore
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)  # type: ignore
             glPushMatrix()
 
             self.display()
@@ -163,13 +173,13 @@ class PlayerView:
         if game_object.kind == "billboard_cube":
             self.view_objects[game_object.id] = BillboardCubeView(game_object)
 
-    
-
     def prepare_3d(self):
         glViewport(0, 0, self.window_width, self.window_height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluPerspective(self.field_of_view, self.aspect_ratio, self.near_distance, self.far_distance)
+        gluPerspective(
+            self.field_of_view, self.aspect_ratio, self.near_distance, self.far_distance
+        )
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
         glEnable(GL_COLOR_MATERIAL)
@@ -188,7 +198,9 @@ class PlayerView:
         glLoadIdentity()
 
         gluPickMatrix(windowX, windowY, 20, 20, glGetIntegerv(GL_VIEWPORT))
-        gluPerspective(self.field_of_view, self.aspect_ratio, self.near_distance, self.far_distance)
+        gluPerspective(
+            self.field_of_view, self.aspect_ratio, self.near_distance, self.far_distance
+        )
 
         glMatrixMode(GL_MODELVIEW)
         glLoadMatrixf(self.viewMatrix)
@@ -210,7 +222,7 @@ class PlayerView:
 
         if not objects:
             return
-        
+
         camera = numpy.linalg.inv(glGetFloatv(GL_MODELVIEW_MATRIX))
         camera = camera[3][0:3]
 
@@ -219,7 +231,9 @@ class PlayerView:
         for id in objects:
             obj_pos = self.view_objects[id].game_object.position
 
-            if not closest or numpy.linalg.norm(obj_pos - camera) < numpy.linalg.norm(closest.position - camera):
+            if not closest or numpy.linalg.norm(obj_pos - camera) < numpy.linalg.norm(
+                closest.position - camera
+            ):
                 closest = self.view_objects[id].game_object
 
         if closest is None:
@@ -228,8 +242,10 @@ class PlayerView:
 
         closest.clicked()
 
-        self.click_log.append(_("Object clicked: ") + str(closest.id))  # Add the ID to the log
-        self.click_log = self.click_log[-5:] 
+        self.click_log.append(
+            _("Object clicked: ") + str(closest.id)
+        )  # Add the ID to the log
+        self.click_log = self.click_log[-5:]
 
     def render_hud(self):
         glDisable(GL_DEPTH_TEST)
@@ -265,19 +281,22 @@ class PlayerView:
     def disable_lighting(self):
         glDisable(GL_LIGHTING)
 
-
     def render_log(self):
         # Display the click log
         y = self.window_height  # Adjust this as needed
         for log_entry in self.click_log:
-            img = pygame.font.SysFont("Arial", 20).render(log_entry, True, (128, 128, 128))  # Use gray color
+            img = pygame.font.SysFont("Arial", 20).render(
+                log_entry, True, (128, 128, 128)
+            )  # Use gray color
             w, h = img.get_size()
             data = pygame.image.tostring(img, "RGBA", 1)  # type: ignore
             texture = glGenTextures(1)
             glBindTexture(GL_TEXTURE_2D, texture)
             glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
             glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data)
+            glTexImage2D(
+                GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data
+            )
 
             glEnable(GL_TEXTURE_2D)
             glEnable(GL_BLEND)
@@ -300,7 +319,6 @@ class PlayerView:
             glDisable(GL_BLEND)
 
             y -= 20  # Move up for the next entry
-
 
     def render_clicks(self):
         glEnable(GL_TEXTURE_2D)
