@@ -1,5 +1,4 @@
 from game_object import GameObject
-from game_object_player import Player
 from behavior_x_rotation import XRotation
 from behavior_y_rotation import YRotation
 from behavior_z_rotation import ZRotation
@@ -45,7 +44,7 @@ class GameLogic:
         cube.add_behavior(ZRotation(0.5))
 
         player = self.create_object("player",[0.0, 0.0, 0.0], [1.0, 1.0, 1.0])
-        player.add_behavior(KeyMove(0.5))
+        player.add_behavior(KeyMove(0.1))
         player.add_behavior(MouseRotation(0.1))
         player.add_behavior(BlockedByObjects())
 
@@ -60,7 +59,6 @@ class GameLogic:
 
     def collide(self, object1, object2):
         radius1 = max(object1.size)
-
         mypos = np.array(object1.position)
         otherpos = np.array(object2.position)
 
