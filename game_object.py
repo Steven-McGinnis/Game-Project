@@ -7,6 +7,19 @@ class GameObject:
         self.x_rotation = 0
         self.y_rotation = 0
         self.z_rotation = 0
+
+        self.behaviors = []
+
+        self.collisions = []
+        self._moved = False
+
+    def add_behavior(self, behavior):
+        self.behaviors.append(behavior)
+        behavior.connect(self)
+
+    @property
+    def moved(self):
+        return self._moved
     
     @property
     def kind(self):
@@ -65,7 +78,10 @@ class GameObject:
         self._size = value
 
     def tick(self):
-        pass
+        for behavior in self.behaviors:
+            behavior.tick()
+        self.collisions = []
+        self._moved = False
 
     def clicked(self):
         pass

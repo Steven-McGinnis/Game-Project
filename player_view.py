@@ -20,11 +20,10 @@ class PlayerView:
         self.view_objects = {}
         self.click_log = []
         self.player = None
-
+        self.clock = pygame.time.Clock()
         pub.subscribe(self.new_game_object, "create")
 
         self.paused = False
-        self.camera_angle = 0.0
 
         self.setup()
         global clicks_texture
@@ -37,8 +36,8 @@ class PlayerView:
     def setup(self):
         pygame.init()
 
-        self.window_width = 800
-        self.window_height = 600
+        self.window_width = 1920
+        self.window_height = 1080
         self.viewCenter = (self.window_width // 2, self.window_height // 2)
 
         pygame.display.set_mode(
@@ -115,7 +114,7 @@ class PlayerView:
 
             keypress = pygame.key.get_pressed()
             if keypress[pygame.K_w]:
-               pub.sendMessage("key-w")
+                pub.sendMessage("key-w")
             if keypress[pygame.K_s]:
                 pub.sendMessage("key-s")
             if keypress[pygame.K_a]:
@@ -123,16 +122,18 @@ class PlayerView:
             if keypress[pygame.K_d]:
                 pub.sendMessage("key-d")
 
-            pub.sendMessage('rotate-y', amount=mouseMove[0] * 0.1)
-            pub.sendMessage('rotate-x', amount=mouseMove[1] * 0.1)
+            pub.sendMessage("rotate-y", amount=mouseMove[0])
+            pub.sendMessage("rotate-x", amount=mouseMove[1])
 
             if self.player:
                 glRotate(self.player.x_rotation, 1.0, 0.0, 0.0)
                 glRotate(self.player.y_rotation, 0.0, 1.0, 0.0)
-                glTranslate(-self.player.position[0], -self.player.position[1], -self.player.position[2])
+                glTranslate(
+                    -self.player.position[0],
+                    -self.player.position[1],
+                    -self.player.position[2],
+                )
                 self.viewMatrix = glGetFloatv(GL_MODELVIEW_MATRIX)
-
-
 
             self.enable_lighting()
 
@@ -147,7 +148,7 @@ class PlayerView:
             self.render_hud()
 
             pygame.display.flip()
-            pygame.time.wait(10)
+            self.clock.tick(30)
 
     # Display All Objects in Scene
     def display(self):
@@ -173,7 +174,6 @@ class PlayerView:
 
         if game_object.kind == "player":
             self.player = game_object
-
 
     def prepare_3d(self):
         glViewport(0, 0, self.window_width, self.window_height)
