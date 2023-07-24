@@ -1,14 +1,16 @@
 {
     "en": {
         "Clicks :": "Clicks :",
+        "Object clicked: ": "Object clicked: ",
         "Scores :": "Scores :"
+    },
+    "es": {
+        "Clicks: :": "Objeto clickeado: ",
+        "Scores: :": "Puntuaci\u00c3\u00b3n: "
     },
     "fr": {
         "Clicks :": "Clique :",
+        "Object clicked: ": "Object clicked: ",
         "Scores :": "Scoreses :"
-    },
-    "es": {
-        "Object clicked: ": "Objeto clickeado: ",
-        "No closest object found": "No se encontró el objeto más cercano"
     }
 }
