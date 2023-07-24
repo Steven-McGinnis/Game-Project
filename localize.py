@@ -1,4 +1,5 @@
 import json
+
 class Localize:
     lang = "en"
     strings = {}
