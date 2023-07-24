@@ -6,5 +6,9 @@
     "fr": {
         "Clicks :": "Clique :",
         "Scores :": "Scoreses :"
+    },
+    "es": {
+        "Object clicked: ": "Objeto clickeado: ",
+        "No closest object found": "No se encontró el objeto más cercano"
     }
 }

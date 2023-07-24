@@ -7,6 +7,7 @@ from view_floor import FloorView
 from view_sphere import SphereView
 from view_billboard_cube import BillboardCubeView
 from localize import _
+from localize import Localize
 import numpy
 import pygame
 import random
@@ -15,6 +16,7 @@ class PlayerView:
     def __init__(self, game_logic):
         self.game_logic = game_logic
         self.view_objects = {}
+        self.click_log = []
         
         pub.subscribe(self.new_game_object, "create")
 
@@ -51,8 +53,7 @@ class PlayerView:
         global clicks
         global clicks_texture
         clicks += 1
-        img = pygame.font.SysFont("Arial", 25).render(_("Clicks: ")+str(clicks), True, (0, 255, 0), (0, 0, 0, 0))
-
+        img = pygame.font.SysFont("Arial", 25).render(_("Clicks :")+str(clicks), True, (0, 255, 0), (0, 0, 0, 0))
 
         w, h = img.get_size()
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
@@ -101,6 +102,8 @@ class PlayerView:
             self.prepare_3d()
 
             keypress = pygame.key.get_pressed()
+            self.camera_angle += mouseMove[1] * 0.1
+            glRotatef(self.camera_angle, 1.0, 0.0, 0.0)
 
             glPushMatrix()
             glLoadIdentity()
@@ -220,10 +223,13 @@ class PlayerView:
                 closest = self.view_objects[id].game_object
 
         if closest is None:
-            print("No closest object found")
+            print(_("No closest object found"))
             return
 
         closest.clicked()
+
+        self.click_log.append(_("Object clicked: ") + str(closest.id))  # Add the ID to the log
+        self.click_log = self.click_log[-5:] 
 
     def render_hud(self):
         glDisable(GL_DEPTH_TEST)
@@ -235,6 +241,68 @@ class PlayerView:
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 
+        self.render_clicks()  # Call the new function here
+
+        self.render_log()
+
+        glDisable(GL_BLEND)
+
+        glEnable(GL_DEPTH_TEST)
+        glDepthMask(GL_TRUE)
+
+    def enable_lighting(self):
+        light_ambient = [0.2, 0.2, 0.2, 1.0]
+        light_diffuse = [1.0, 1.0, 1.0, 1.0]
+        light_position = [0.0, 4.0, 1.0, 1.0]
+
+        glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient)
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse)
+        glLightfv(GL_LIGHT0, GL_POSITION, light_position)
+
+        glEnable(GL_LIGHTING)
+        glEnable(GL_LIGHT0)
+
+    def disable_lighting(self):
+        glDisable(GL_LIGHTING)
+
+
+    def render_log(self):
+        # Display the click log
+        y = self.window_height  # Adjust this as needed
+        for log_entry in self.click_log:
+            img = pygame.font.SysFont("Arial", 20).render(log_entry, True, (128, 128, 128))  # Use gray color
+            w, h = img.get_size()
+            data = pygame.image.tostring(img, "RGBA", 1)  # type: ignore
+            texture = glGenTextures(1)
+            glBindTexture(GL_TEXTURE_2D, texture)
+            glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+            glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data)
+
+            glEnable(GL_TEXTURE_2D)
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+            glBegin(GL_QUADS)
+            glColor4f(1.0, 1.0, 1.0, 1.0)  # White color to keep texture color
+            glTexCoord2f(0.0, 1.0)
+            glVertex2f(self.window_width - 100, y)  # Reduce width here
+            glTexCoord2f(1.0, 1.0)
+            glVertex2f(self.window_width, y)
+            glTexCoord2f(1.0, 0.0)
+            glVertex2f(self.window_width, y - 20)
+            glTexCoord2f(0.0, 0.0)
+            glVertex2f(self.window_width - 100, y - 20)  # And here
+            glEnd()
+
+            glDeleteTextures([texture])  # Delete the texture after using it
+            glDisable(GL_TEXTURE_2D)
+            glDisable(GL_BLEND)
+
+            y -= 20  # Move up for the next entry
+
+
+    def render_clicks(self):
         glEnable(GL_TEXTURE_2D)
         glBindTexture(GL_TEXTURE_2D, clicks_texture)
 
@@ -256,23 +324,3 @@ class PlayerView:
         glEnd()
 
         glDisable(GL_TEXTURE_2D)
-
-        glDisable(GL_BLEND)
-
-        glEnable(GL_DEPTH_TEST)
-        glDepthMask(GL_TRUE)
-
-    def enable_lighting(self):
-        light_ambient = [0.2, 0.2, 0.2, 1.0]
-        light_diffuse = [1.0, 1.0, 1.0, 1.0]
-        light_position = [0.0, 4.0, 1.0, 1.0]
-
-        glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient)
-        glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse)
-        glLightfv(GL_LIGHT0, GL_POSITION, light_position)
-
-        glEnable(GL_LIGHTING)
-        glEnable(GL_LIGHT0)
-
-    def disable_lighting(self):
-        glDisable(GL_LIGHTING)

@@ -1,6 +1,6 @@
 import json
 class Localize:
-    lang = "en"
+    lang = "fr"
     strings = {}
 
 
