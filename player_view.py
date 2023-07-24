@@ -19,6 +19,7 @@ class PlayerView:
         self.game_logic = game_logic
         self.view_objects = {}
         self.click_log = []
+        self.player = None
 
         pub.subscribe(self.new_game_object, "create")
 
@@ -113,28 +114,25 @@ class PlayerView:
             self.prepare_3d()
 
             keypress = pygame.key.get_pressed()
-            self.camera_angle += mouseMove[1] * 0.1
-            glRotatef(self.camera_angle, 1.0, 0.0, 0.0)
-
-            glPushMatrix()
-            glLoadIdentity()
-
             if keypress[pygame.K_w]:
-                glTranslatef(0, 0, 0.1)
+               pub.sendMessage("key-w")
             if keypress[pygame.K_s]:
-                glTranslatef(0, 0, -0.1)
+                pub.sendMessage("key-s")
             if keypress[pygame.K_a]:
-                glTranslatef(0.1, 0, 0)
+                pub.sendMessage("key-a")
             if keypress[pygame.K_d]:
-                glTranslatef(-0.1, 0, 0)
+                pub.sendMessage("key-d")
 
-            glRotatef(mouseMove[0] * 0.1, 0.0, 1.0, 0.0)
+            pub.sendMessage('rotate-y', amount=mouseMove[0] * 0.1)
+            pub.sendMessage('rotate-x', amount=mouseMove[1] * 0.1)
 
-            glMultMatrixf(self.viewMatrix)
-            self.viewMatrix = glGetFloatv(GL_MODELVIEW_MATRIX)
+            if self.player:
+                glRotate(self.player.x_rotation, 1.0, 0.0, 0.0)
+                glRotate(self.player.y_rotation, 0.0, 1.0, 0.0)
+                glTranslate(-self.player.position[0], -self.player.position[1], -self.player.position[2])
+                self.viewMatrix = glGetFloatv(GL_MODELVIEW_MATRIX)
 
-            glPopMatrix()
-            glMultMatrixf(self.viewMatrix)
+
 
             self.enable_lighting()
 
@@ -167,11 +165,15 @@ class PlayerView:
             self.view_objects[game_object.id] = SphereView(game_object)
 
         if game_object.kind == "floor":
-            texture_file = "./textures/grassSeamless.png"  # Replace with the path to your texture file
+            texture_file = "./textures/grassSeamless.png"
             self.view_objects[game_object.id] = FloorView(game_object, texture_file)
 
         if game_object.kind == "billboard_cube":
             self.view_objects[game_object.id] = BillboardCubeView(game_object)
+
+        if game_object.kind == "player":
+            self.player = game_object
+
 
     def prepare_3d(self):
         glViewport(0, 0, self.window_width, self.window_height)
