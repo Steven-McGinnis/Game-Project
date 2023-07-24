@@ -123,11 +123,15 @@ class PlayerView:
             glPopMatrix()
             glMultMatrixf(self.viewMatrix)
 
+            self.enable_lighting()
+
             glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT) # type: ignore
             glPushMatrix()
 
             self.display()
             glPopMatrix()
+
+            self.disable_lighting()
 
             self.render_hud()
 
@@ -257,3 +261,18 @@ class PlayerView:
 
         glEnable(GL_DEPTH_TEST)
         glDepthMask(GL_TRUE)
+
+    def enable_lighting(self):
+        light_ambient = [0.2, 0.2, 0.2, 1.0]
+        light_diffuse = [1.0, 1.0, 1.0, 1.0]
+        light_position = [0.0, 4.0, 1.0, 1.0]
+
+        glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient)
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse)
+        glLightfv(GL_LIGHT0, GL_POSITION, light_position)
+
+        glEnable(GL_LIGHTING)
+        glEnable(GL_LIGHT0)
+
+    def disable_lighting(self):
+        glDisable(GL_LIGHTING)

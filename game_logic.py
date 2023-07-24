@@ -33,8 +33,8 @@ class GameLogic:
         self.create_object("sphere", [0, 0, -10],"standard")
         # obj.y_rotation = 45
 
-        self.create_object("floor", [0, 0, -20], "standard")
-        
+        floor = self.create_object("floor", [0, -5, -20], "standard")
+        floor.x_rotation = -89
 
     def get_property(self, key):
         if key in self.properties:
