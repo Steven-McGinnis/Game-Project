@@ -63,6 +63,7 @@ class PlayerView:
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data)
     
     def tick(self):
+        mouseMove = (0, 0)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -89,6 +90,11 @@ class PlayerView:
                 if event.key == pygame.K_p:
                     self.paused = not self.paused
                     pygame.mouse.set_pos(self.viewCenter)
+            
+            if not self.paused:
+                if event.type == pygame.MOUSEMOTION:
+                    mouseMove = [event.pos[i] - self.viewCenter[i] for i in range(2)]
+                pygame.mouse.set_pos(self.viewCenter)
 
         # If Not Paused Do This
         if not self.paused:
@@ -108,13 +114,16 @@ class PlayerView:
             if keypress[pygame.K_d]:
                 glTranslatef(-0.1, 0, 0)
 
+            glRotatef(mouseMove[0] * 0.1, 0.0, 1.0, 0.0)
+            
+
             glMultMatrixf(self.viewMatrix)
             self.viewMatrix = glGetFloatv(GL_MODELVIEW_MATRIX)
 
             glPopMatrix()
             glMultMatrixf(self.viewMatrix)
 
-            glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT) 
+            glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT) # type: ignore
             glPushMatrix()
 
             self.display()
@@ -175,6 +184,7 @@ class PlayerView:
         gluPerspective(self.field_of_view, self.aspect_ratio, self.near_distance, self.far_distance)
 
         glMatrixMode(GL_MODELVIEW)
+        glLoadMatrixf(self.viewMatrix)
         self.display()
 
         glMatrixMode(GL_PROJECTION)
