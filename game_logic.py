@@ -25,9 +25,13 @@ class GameLogic:
                 for other in self.game_objects:
                     if self.game_objects[game_object] == self.game_objects[other]:
                         continue
-                
-                    if self.collide(self.game_objects[game_object], self.game_objects[other]):
-                        self.game_objects[game_object].collisions.append(self.game_objects[other])
+
+                    if self.collide(
+                        self.game_objects[game_object], self.game_objects[other]
+                    ):
+                        self.game_objects[game_object].collisions.append(
+                            self.game_objects[other]
+                        )
 
         for id in self.game_objects:
             self.game_objects[id].tick()
@@ -44,9 +48,7 @@ class GameLogic:
         self.create_environment()
         self.create_level_objects()
 
-
         player = self.load_player()
-
 
     def get_property(self, key):
         if key in self.properties:
@@ -73,28 +75,28 @@ class GameLogic:
 
         return distance < radius1 + radius2
 
-
     def load_player(self):
-        player = self.create_object("player",[0.0, 0.0, 0.0], [1.0, 1.0, 1.0])
-        # player.add_behavior(KeyMove(0.1))
-        # player.add_behavior(MouseRotation(0.1))
-        # player.add_behavior(BlockedByObjects())
-        # player.add_behavior(Jump(10, 0.5))
-        player.add_behavior(Flying(0.9, 0.5))  # 3.0 for movement speed, 0.5 for rotation speed
+        player = self.create_object("player", [0.0, 0.0, 0.0], [1.0, 1.0, 1.0])
+        player.add_behavior(KeyMove(0.1))
+        player.add_behavior(MouseRotation(0.1))
+        player.add_behavior(BlockedByObjects())
+        player.add_behavior(Jump(10, 0.5))
+        # player.add_behavior(
+        #     Flying(0.9, 0.5)
+        # )  # 3.0 for movement speed, 0.5 for rotation speed
         return player
-    
+
     def create_environment(self):
-        floor = self.create_object("floor", [0.0, -1.0, 0.0], [10.0, 0.5, 10.0])
+        ground = self.create_object("floor", [0.0, -1.1, 0.0], [50.0, 50, 50.0])
+        ground._x_rotation = 90
+
+        floor = self.create_object("wood_floor", [0.0, -1.0, 0.0], [1.0, 1.0, 1.0])
         floor._x_rotation = 90
-        # floor = self.create_object("floor", [0.0, -1.0, 80.0], [10.0, 0.5, 10.0])
-        # floor._x_rotation = 90
+
+        wall = self.create_object("outer_wall", [-37.5, 5, 50], [1.0, 1.0, 1.0])
+        wall = self.create_object("outer_wall", [-10, 5, 50], [1.0, 1.0, 1.0])
 
     def create_level_objects(self):
-        cube = self.create_object ("cube",  [-15,0,-10],[0.25, 10.0, 0.25])
-        cube.add_behavior(XRotation(0.5))
-        cube.add_behavior(YRotation(0.5))
-        cube.add_behavior(ZRotation(0.5))
-
-        sphere = self.create_object ("sphere",  [15,0,-10],[1.0, 1.0, 1.0])
+        sphere = self.create_object("sphere", [15, 0, -10], [1.0, 1.0, 1.0])
         sphere.add_behavior(XRotation(0.5))
         sphere.add_behavior(PowerUpBob(0.5, 1))

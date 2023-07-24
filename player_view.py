@@ -7,6 +7,7 @@ from view_floor import FloorView
 from view_sphere import SphereView
 from game_object import GameObject
 from view_billboard_cube import BillboardCubeView
+from view_wall import WallView
 from behavior_jump import Jump
 from localize import _
 from localize import Localize
@@ -28,12 +29,6 @@ class PlayerView:
 
         self.setup()
         self.create_hud_variables()
-        global clicks_texture
-        global clicks
-        clicks = -1
-        clicks_texture = glGenTextures(1)
-        self.user_clicked()
-
 
     def create_hud_variables(self):
         self.health = 100
@@ -59,12 +54,10 @@ class PlayerView:
         glBindTexture(GL_TEXTURE_2D, texture)
         glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
         glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-        data = pygame.image.tostring(img, "RGBA", 1)
+        data = pygame.image.tostring(img, "RGBA", 1)  # type: ignore
         glTexImage2D(
             GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data
         )
-
-
 
     # Setup the Window
     def setup(self):
@@ -86,24 +79,6 @@ class PlayerView:
         self.prepare_3d()
         self.viewMatrix = glGetFloatv(GL_MODELVIEW_MATRIX)
 
-    def user_clicked(self):
-        global clicks
-        global clicks_texture
-        clicks += 1
-        img = pygame.font.SysFont("Arial", 25).render(
-            _("Clicks :") + str(clicks), True, (0, 255, 0), (0, 0, 0, 0)
-        )
-
-        w, h = img.get_size()
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
-        glBindTexture(GL_TEXTURE_2D, clicks_texture)
-        glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-        glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-        data = pygame.image.tostring(img, "RGBA", 1)  # type: ignore
-        glTexImage2D(
-            GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data
-        )
-
     def tick(self):
         global clicks
         mouseMove = (0, 0)
@@ -116,20 +91,18 @@ class PlayerView:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 self.handle_click(pos)
-                self.user_clicked()
 
             if event.type == pygame.KEYDOWN:
-
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     self.game_logic.set_property("quit", True)
                     return
 
                 if event.key == pygame.K_SPACE:
-                  if self.player:
-                    for behavior in self.player.behaviors:
-                        if isinstance(behavior, Jump):
-                            behavior.jump()
+                    if self.player:
+                        for behavior in self.player.behaviors:
+                            if isinstance(behavior, Jump):
+                                behavior.jump()
 
                 if event.key == pygame.K_p:
                     self.paused = not self.paused
@@ -137,7 +110,6 @@ class PlayerView:
 
                 if event.key == pygame.K_l:
                     Localize.switch_language()
-                    self.user_clicked()
 
             if not self.paused:
                 if event.type == pygame.MOUSEMOTION:
@@ -151,12 +123,16 @@ class PlayerView:
             keypress = pygame.key.get_pressed()
             if keypress[pygame.K_w]:
                 pub.sendMessage("key-w")
+                self.use_stamina(1)
             if keypress[pygame.K_s]:
                 pub.sendMessage("key-s")
+                self.use_stamina(1)
             if keypress[pygame.K_a]:
                 pub.sendMessage("key-a")
+                self.use_stamina(1)
             if keypress[pygame.K_d]:
                 pub.sendMessage("key-d")
+                self.use_stamina(1)
 
             pub.sendMessage("rotate-y", amount=mouseMove[0])
             pub.sendMessage("rotate-x", amount=mouseMove[1])
@@ -184,7 +160,7 @@ class PlayerView:
             self.render_hud()
 
             pygame.display.flip()
-            self.clock.tick(60)
+            self.clock.tick(30)
 
     # Display All Objects in Scene
     def display(self):
@@ -210,6 +186,14 @@ class PlayerView:
 
         if game_object.kind == "player":
             self.player = game_object
+
+        if game_object.kind == "wood_floor":
+            texture_file = "./textures/woodfloor.jpg"
+            self.view_objects[game_object.id] = FloorView(game_object, texture_file)
+
+        if game_object.kind == "outer_wall":
+            texture_file = "./textures/outerwall.jpg"
+            self.view_objects[game_object.id] = WallView(game_object, texture_file)
 
     def prepare_3d(self):
         glViewport(0, 0, self.window_width, self.window_height)
@@ -294,8 +278,7 @@ class PlayerView:
 
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
-        self.render_health_stamina()
-        self.render_clicks()  # Call the new function here
+        self.render_health_stamina()  # Call the new function here
 
         self.render_log()
 
@@ -309,11 +292,11 @@ class PlayerView:
 
         # Render Health
         glBindTexture(GL_TEXTURE_2D, self.health_texture)
-        self.render_text_quad(self.window_width - 200, 100)
+        self.render_text_quad(10, self.window_height - 40)  # Changed position here
 
         # Render Stamina
         glBindTexture(GL_TEXTURE_2D, self.stamina_texture)
-        self.render_text_quad(self.window_width - 200, 60)
+        self.render_text_quad(10, self.window_height - 80)  # And here
 
         glDisable(GL_TEXTURE_2D)
         glDisable(GL_BLEND)
@@ -388,25 +371,18 @@ class PlayerView:
 
             y -= 20  # Move up for the next entry
 
-    def render_clicks(self):
-        glEnable(GL_TEXTURE_2D)
-        glBindTexture(GL_TEXTURE_2D, clicks_texture)
+    def take_damage(self, amount):
+        self.health -= amount
+        self.update_health_stamina_textures()
 
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+    def heal(self, amount):
+        self.health += amount
+        self.update_health_stamina_textures()
 
-        glBegin(GL_QUADS)
-        glColor4f(0.0, 1.0, 0.0, 1.0)  # Green color
-        glTexCoord2f(0.0, 1.0)
-        glVertex2f(0, self.window_height)
-        glTexCoord2f(1.0, 1.0)
-        glVertex2f(200, self.window_height)
-        glTexCoord2f(1.0, 0.0)
-        glVertex2f(200, self.window_height - 50)
-        glTexCoord2f(0.0, 0.0)
-        glVertex2f(0, self.window_height - 50)
-        glEnd()
+    def use_stamina(self, amount):
+        self.stamina -= amount
+        self.update_health_stamina_textures()
 
-        glDisable(GL_TEXTURE_2D)
-        glDisable(GL_BLEND)
-
+    def recover_stamina(self, amount):
+        self.stamina += amount
+        self.update_health_stamina_textures()

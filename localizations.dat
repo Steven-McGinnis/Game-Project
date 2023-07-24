@@ -1,19 +1,24 @@
 {
     "en": {
-        "Clicks :": "Clicks :",
+        "Clicks:": "Clicks:",
+        "Health:": "Health:",
         "Health: ": "Health: ",
+        "Object clicked:": "Object clicked:",
         "Object clicked: ": "Object clicked: ",
-        "Scores :": "Scores :",
+        "Scores:": "Scores:",
+        "Stamina:": "Stamina:",
         "Stamina: ": "Stamina: "
     },
     "es": {
-        "Clicks :": "Clics :",
-        "Object clicked: ": "Objeto clickeado: ",
-        "Scores :": "Puntuaciones :"
+        "Clicks:": "Clics:",
+        "Health:": "Salud:",
+        "Object clicked:": "Objeto clickeado:",
+        "Scores:": "Puntuaciones:"
     },
     "fr": {
-        "Clicks :": "Clics :",
-        "Object clicked: ": "Objet cliqu\u00c3\u00a9: ",
-        "Scores :": "Scores :"
+        "Clicks:": "Clics:",
+        "Health:": "Sant\u00c3\u00a9:",
+        "Object clicked:": "Objet cliqu\u00c3\u00a9:",
+        "Scores:": "Scores:"
     }
 }

@@ -4,7 +4,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 
 
-class FloorView(ViewObject):
+class WallView(ViewObject):
     def __init__(self, game_object, texture_file):
         super().__init__(game_object)
         self.texture = self.load_texture(texture_file)
@@ -42,13 +42,13 @@ class FloorView(ViewObject):
 
         glBegin(GL_QUADS)
         glTexCoord2f(0.0, 0.0)
-        glVertex3f(-0.5, -0.5, 0.0)
-        glTexCoord2f(20.0, 0.0)
-        glVertex3f(0.5, -0.5, 0.0)
-        glTexCoord2f(20.0, 20.0)
-        glVertex3f(0.5, 0.5, 0.0)
-        glTexCoord2f(0.0, 20.0)
-        glVertex3f(-0.5, 0.5, 0.0)
+        glVertex3f(-12.5, -6.25, 0.0)
+        glTexCoord2f(5.0, 0.0)
+        glVertex3f(12.5, -6.25, 0.0)
+        glTexCoord2f(5.0, 2.5)
+        glVertex3f(12.5, 6.25, 0.0)
+        glTexCoord2f(0.0, 2.5)
+        glVertex3f(-12.5, 6.25, 0.0)
         glEnd()
 
         glDisable(GL_TEXTURE_2D)
