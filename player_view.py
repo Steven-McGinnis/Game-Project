@@ -92,12 +92,35 @@ class PlayerView:
 
         # If Not Paused Do This
         if not self.paused:
-            glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)  # type: ignore
-            glMatrixMode(GL_MODELVIEW)
-            glLoadIdentity()
-
             self.prepare_3d()
+
+            keypress = pygame.key.get_pressed()
+
+            glPushMatrix()
+            glLoadIdentity()
+            
+            if keypress[pygame.K_w]:
+                glTranslatef(0, 0, 0.1)
+            if keypress[pygame.K_s]:
+                glTranslatef(0, 0, -0.1)
+            if keypress[pygame.K_a]:
+                glTranslatef(0.1, 0, 0)
+            if keypress[pygame.K_d]:
+                glTranslatef(-0.1, 0, 0)
+
+            glMultMatrixf(self.viewMatrix)
+            self.viewMatrix = glGetFloatv(GL_MODELVIEW_MATRIX)
+
+            glPopMatrix()
+            glMultMatrixf(self.viewMatrix)
+
+            glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT) 
+            glPushMatrix()
+
             self.display()
+            glPopMatrix()
+
+            self.render_hud()
 
             pygame.display.flip()
             pygame.time.wait(10)
@@ -108,8 +131,6 @@ class PlayerView:
 
         for id in self.view_objects:
             self.view_objects[id].display()
-
-        self.render_hud()
 
     # Call the Right Classes to Display the Right Objects
     def new_game_object(self, game_object):
