@@ -7,6 +7,7 @@ from view_floor import FloorView
 from view_sphere import SphereView
 from game_object import GameObject
 from view_billboard_cube import BillboardCubeView
+from behavior_jump import Jump
 from localize import _
 from localize import Localize
 import numpy
@@ -26,11 +27,44 @@ class PlayerView:
         self.paused = False
 
         self.setup()
+        self.create_hud_variables()
         global clicks_texture
         global clicks
         clicks = -1
         clicks_texture = glGenTextures(1)
         self.user_clicked()
+
+
+    def create_hud_variables(self):
+        self.health = 100
+        self.stamina = 100
+        self.health_texture = glGenTextures(1)
+        self.stamina_texture = glGenTextures(1)
+        self.update_health_stamina_textures()
+
+    def update_health_stamina_textures(self):
+        img = pygame.font.SysFont("Arial", 25).render(
+            _("Health: ") + str(self.health), True, (255, 0, 0), (0, 0, 0, 0)
+        )
+        self.update_texture(img, self.health_texture)
+
+        img = pygame.font.SysFont("Arial", 25).render(
+            _("Stamina: ") + str(self.stamina), True, (0, 0, 255), (0, 0, 0, 0)
+        )
+        self.update_texture(img, self.stamina_texture)
+
+    def update_texture(self, img, texture):
+        w, h = img.get_size()
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+        glBindTexture(GL_TEXTURE_2D, texture)
+        glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        data = pygame.image.tostring(img, "RGBA", 1)
+        glTexImage2D(
+            GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data
+        )
+
+
 
     # Setup the Window
     def setup(self):
@@ -92,14 +126,10 @@ class PlayerView:
                     return
 
                 if event.key == pygame.K_SPACE:
-                    x = random.uniform(
-                        -10, 10
-                    )
-                    y = random.uniform(-10, 10)
-                    z = random.uniform(-10, 10)
-                    self.game_logic.create_object(
-                        "sphere", [x, y, -10], [1.0, 1.0, 1.0]
-                    )
+                  if self.player:
+                    for behavior in self.player.behaviors:
+                        if isinstance(behavior, Jump):
+                            behavior.jump()
 
                 if event.key == pygame.K_p:
                     self.paused = not self.paused
@@ -154,7 +184,7 @@ class PlayerView:
             self.render_hud()
 
             pygame.display.flip()
-            self.clock.tick(30)
+            self.clock.tick(60)
 
     # Display All Objects in Scene
     def display(self):
@@ -264,7 +294,7 @@ class PlayerView:
 
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
-
+        self.render_health_stamina()
         self.render_clicks()  # Call the new function here
 
         self.render_log()
@@ -273,6 +303,36 @@ class PlayerView:
 
         glEnable(GL_DEPTH_TEST)
         glDepthMask(GL_TRUE)
+
+    def render_health_stamina(self):
+        glEnable(GL_TEXTURE_2D)
+
+        # Render Health
+        glBindTexture(GL_TEXTURE_2D, self.health_texture)
+        self.render_text_quad(self.window_width - 200, 100)
+
+        # Render Stamina
+        glBindTexture(GL_TEXTURE_2D, self.stamina_texture)
+        self.render_text_quad(self.window_width - 200, 60)
+
+        glDisable(GL_TEXTURE_2D)
+        glDisable(GL_BLEND)
+
+    def render_text_quad(self, x, y):
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+        glBegin(GL_QUADS)
+        glColor4f(1.0, 1.0, 1.0, 1.0)  # White color
+        glTexCoord2f(0.0, 1.0)
+        glVertex2f(x, y + 30)
+        glTexCoord2f(1.0, 1.0)
+        glVertex2f(x + 200, y + 30)
+        glTexCoord2f(1.0, 0.0)
+        glVertex2f(x + 200, y)
+        glTexCoord2f(0.0, 0.0)
+        glVertex2f(x, y)
+        glEnd()
 
     def enable_lighting(self):
         light_ambient = [0.2, 0.2, 0.2, 1.0]
@@ -335,10 +395,8 @@ class PlayerView:
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-        glClearColor(0.0, 0.0, 0.0, 1.0)
-
         glBegin(GL_QUADS)
-        glColor4f(0.0, 1.0, 0.0, 1.0)
+        glColor4f(0.0, 1.0, 0.0, 1.0)  # Green color
         glTexCoord2f(0.0, 1.0)
         glVertex2f(0, self.window_height)
         glTexCoord2f(1.0, 1.0)
@@ -350,3 +408,5 @@ class PlayerView:
         glEnd()
 
         glDisable(GL_TEXTURE_2D)
+        glDisable(GL_BLEND)
+

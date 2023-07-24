@@ -1,8 +1,10 @@
 {
     "en": {
         "Clicks :": "Clicks :",
+        "Health: ": "Health: ",
         "Object clicked: ": "Object clicked: ",
-        "Scores :": "Scores :"
+        "Scores :": "Scores :",
+        "Stamina: ": "Stamina: "
     },
     "es": {
         "Clicks :": "Clics :",

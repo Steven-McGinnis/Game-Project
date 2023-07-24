@@ -5,6 +5,9 @@ from behavior_z_rotation import ZRotation
 from behavior_mouse_rotation import MouseRotation
 from behavior_key_move import KeyMove
 from behavior_collision import BlockedByObjects
+from behavior_jump import Jump
+from behavior_flying import Flying
+from behavior_power_up import PowerUpBob
 from pubsub import pub
 import numpy as np
 
@@ -38,10 +41,9 @@ class GameLogic:
         return obj
 
     def load_world(self):
-        cube = self.create_object ("cube",  [-15,0,-10],[0.25, 10.0, 0.25])
-        cube.add_behavior(XRotation(0.5))
-        cube.add_behavior(YRotation(0.5))
-        cube.add_behavior(ZRotation(0.5))
+        self.create_environment()
+        self.create_level_objects()
+
 
         player = self.load_player()
 
@@ -56,25 +58,43 @@ class GameLogic:
         self.properties[key] = value
 
     def collide(self, object1, object2):
-        radius1 = max(object1.size)
+        if object1.kind == "floor" or object2.kind == "floor":
+            radius1 = min(object1.size)
+            radius2 = min(object2.size)
+        else:
+            radius1 = max(object1.size)
+            radius2 = max(object2.size)
+
         mypos = np.array(object1.position)
         otherpos = np.array(object2.position)
 
         distance = np.linalg.norm(mypos - otherpos)
         direction_vector = (mypos - otherpos) / distance
 
-        max_direction = max(direction_vector, key=abs)
-        indices = [i for i , j in enumerate(direction_vector) if j == max_direction]
-        sizes = [object2.size[j] for i, j in enumerate(indices)]
-        radius2 = max(sizes)
-
         return distance < radius1 + radius2
+
 
     def load_player(self):
         player = self.create_object("player",[0.0, 0.0, 0.0], [1.0, 1.0, 1.0])
-        player.add_behavior(KeyMove(0.1))
-        player.add_behavior(MouseRotation(0.1))
-        player.add_behavior(BlockedByObjects())
+        # player.add_behavior(KeyMove(0.1))
+        # player.add_behavior(MouseRotation(0.1))
+        # player.add_behavior(BlockedByObjects())
+        # player.add_behavior(Jump(10, 0.5))
+        player.add_behavior(Flying(0.9, 0.5))  # 3.0 for movement speed, 0.5 for rotation speed
         return player
     
-    
+    def create_environment(self):
+        floor = self.create_object("floor", [0.0, -1.0, 0.0], [10.0, 0.5, 10.0])
+        floor._x_rotation = 90
+        # floor = self.create_object("floor", [0.0, -1.0, 80.0], [10.0, 0.5, 10.0])
+        # floor._x_rotation = 90
+
+    def create_level_objects(self):
+        cube = self.create_object ("cube",  [-15,0,-10],[0.25, 10.0, 0.25])
+        cube.add_behavior(XRotation(0.5))
+        cube.add_behavior(YRotation(0.5))
+        cube.add_behavior(ZRotation(0.5))
+
+        sphere = self.create_object ("sphere",  [15,0,-10],[1.0, 1.0, 1.0])
+        sphere.add_behavior(XRotation(0.5))
+        sphere.add_behavior(PowerUpBob(0.5, 1))

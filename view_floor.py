@@ -31,9 +31,10 @@ class FloorView(ViewObject):
 
         glBegin(GL_QUADS)
         glTexCoord2f(0.0, 0.0); glVertex3f(-50.0, -50.0, 0.0)
-        glTexCoord2f(1.0, 0.0); glVertex3f(50.0, -50.0, 0.0)
-        glTexCoord2f(1.0, 1.0); glVertex3f(50.0, 50.0, 0.0)
-        glTexCoord2f(0.0, 1.0); glVertex3f(-50.0, 50.0, 0.0)
+        glTexCoord2f(20.0, 0.0); glVertex3f(50.0, -50.0, 0.0)
+        glTexCoord2f(20.0, 20.0); glVertex3f(50.0, 50.0, 0.0)
+        glTexCoord2f(0.0, 20.0); glVertex3f(-50.0, 50.0, 0.0)
         glEnd()
 
         glDisable(GL_TEXTURE_2D)
+

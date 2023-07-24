@@ -13,4 +13,3 @@ class BlockedByObjects(Behavior):
                 distance = np.linalg.norm(mypos - otherpos)
                 direction_vector = (mypos - otherpos) / distance
                 self.game_object.position = otherpos + (distance + 0.1) * direction_vector # type: ignore
-                
