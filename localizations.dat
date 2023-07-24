@@ -5,12 +5,13 @@
         "Scores :": "Scores :"
     },
     "es": {
-        "Clicks: :": "Objeto clickeado: ",
-        "Scores: :": "Puntuaci\u00c3\u00b3n: "
+        "Clicks :": "Clics :",
+        "Object clicked: ": "Objeto clickeado: ",
+        "Scores :": "Puntuaciones :"
     },
     "fr": {
-        "Clicks :": "Clique :",
-        "Object clicked: ": "Object clicked: ",
-        "Scores :": "Scoreses :"
+        "Clicks :": "Clics :",
+        "Object clicked: ": "Objet cliqu\u00c3\u00a9: ",
+        "Scores :": "Scores :"
     }
 }

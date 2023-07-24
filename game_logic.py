@@ -43,10 +43,8 @@ class GameLogic:
         cube.add_behavior(YRotation(0.5))
         cube.add_behavior(ZRotation(0.5))
 
-        player = self.create_object("player",[0.0, 0.0, 0.0], [1.0, 1.0, 1.0])
-        player.add_behavior(KeyMove(0.1))
-        player.add_behavior(MouseRotation(0.1))
-        player.add_behavior(BlockedByObjects())
+        player = self.load_player()
+
 
     def get_property(self, key):
         if key in self.properties:
@@ -71,3 +69,12 @@ class GameLogic:
         radius2 = max(sizes)
 
         return distance < radius1 + radius2
+
+    def load_player(self):
+        player = self.create_object("player",[0.0, 0.0, 0.0], [1.0, 1.0, 1.0])
+        player.add_behavior(KeyMove(0.1))
+        player.add_behavior(MouseRotation(0.1))
+        player.add_behavior(BlockedByObjects())
+        return player
+    
+    

@@ -7,3 +7,6 @@ class Behavior:
 
     def tick(self):
         pass
+
+    def clicked(self):
+        pass

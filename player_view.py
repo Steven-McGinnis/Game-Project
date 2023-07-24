@@ -71,6 +71,7 @@ class PlayerView:
         )
 
     def tick(self):
+        global clicks
         mouseMove = (0, 0)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -84,6 +85,7 @@ class PlayerView:
                 self.user_clicked()
 
             if event.type == pygame.KEYDOWN:
+
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     self.game_logic.set_property("quit", True)
@@ -92,16 +94,20 @@ class PlayerView:
                 if event.key == pygame.K_SPACE:
                     x = random.uniform(
                         -10, 10
-                    )  # Generate a random number between -10 and 10
+                    )
                     y = random.uniform(-10, 10)
                     z = random.uniform(-10, 10)
                     self.game_logic.create_object(
-                        GameObject, "sphere", [x, y, -10], [1.0, 1.0, 1.0]
+                        "sphere", [x, y, -10], [1.0, 1.0, 1.0]
                     )
 
                 if event.key == pygame.K_p:
                     self.paused = not self.paused
                     pygame.mouse.set_pos(self.viewCenter)
+
+                if event.key == pygame.K_l:
+                    Localize.switch_language()
+                    self.user_clicked()
 
             if not self.paused:
                 if event.type == pygame.MOUSEMOTION:

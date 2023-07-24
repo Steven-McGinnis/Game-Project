@@ -4,6 +4,8 @@ class Localize:
     lang = "en"
     strings = {}
 
+    languages = ["en", "es", "fr"]
+    current_lang_index = 0
 
     @staticmethod
     def set_lang(lang):
@@ -28,5 +30,10 @@ class Localize:
     def save():
         with open('localizations.dat', 'w') as outfile:
             json.dump(Localize.strings, outfile, sort_keys=True, indent=4,)
+
+    @staticmethod
+    def switch_language():
+        Localize.current_lang_index = (Localize.current_lang_index + 1) % len(Localize.languages)
+        Localize.lang = Localize.languages[Localize.current_lang_index]
 
 _ = Localize.get

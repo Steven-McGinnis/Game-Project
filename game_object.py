@@ -84,4 +84,5 @@ class GameObject:
         self._moved = False
 
     def clicked(self):
-        pass
+        for behavior in self.behaviors:
+            behavior.clicked()
