@@ -37,5 +37,5 @@ class Gravity(Behavior):
             self.game_object.set_property("falling", False)  # type: ignore
 
         
-        self.game_object.set_property("y_velocity", self.speed)  # type: ignore
+        self.game_object.set_property('y_velocity', self.game_object.get_property('y_velocity', 0.0) + self.speed)  # type: ignore
         self.game_object._moved = True  # type: ignore

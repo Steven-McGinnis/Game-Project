@@ -30,4 +30,14 @@ class BlockedByObjects(Behavior):
                     if index == 2:
                         velocity = max(velocity, self.game_object.get_property("z_velocity", 0.1))  # type: ignore
 
-                self.game_object.position = otherpos + (distance + velocity) * direction_vector  # type: ignore
+                face = indices[0]
+                thirdpos = np.array([0.0, 0.0, 0.0])
+                thirdpos[0] = mypos[0] if face == 0 else otherpos[0]
+                thirdpos[1] = mypos[1] if face == 1 else otherpos[1]
+                thirdpos[2] = mypos[2] if face == 2 else otherpos[2]
+                
+                distance = np.linalg.norm(mypos - thirdpos)
+                direction_vector = (mypos - thirdpos) / distance
+
+
+                self.game_object.position = thirdpos + (distance + velocity) * direction_vector  # type: ignore

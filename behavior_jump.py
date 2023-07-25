@@ -27,6 +27,7 @@ class Jump(Behavior):
             self.current = self.speed
             return
 
+        self.game_object.set_property('y_velocity', self.game_object.get_property('y_velocity', 0.0) + self.current)  # type: ignore
         self.game_object.position[1] += self.current  # type: ignore
         self.current -= self.adjust
         self.game_object._moved = True  # type: ignore
