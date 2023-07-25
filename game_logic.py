@@ -20,6 +20,7 @@ class GameLogic:
 
     next_id = 0
 
+
     @staticmethod
     def tick():
         for game_object in GameLogic.game_objects:
@@ -115,3 +116,4 @@ class GameLogic:
             and minz1 < maxz2
             and minz2 < maxz1
         )
+    

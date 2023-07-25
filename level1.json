@@ -17,10 +17,33 @@
       "size": [1.0, 1.0, 1.0] 
     },
     {
-      "kind": "cube",
+      "kind": "world",
       "position": [0.0, -1.0, 0.0],
       "size": [100.0, 1.0, 100.0],
       "texture":"./textures/grassSeamless.png" 
+    },
+    {
+      "kind":"cube",
+      "position": [0.0, 0.0, -5.0],
+      "size": [10.0, 1.5, 0.1],
+      "texture":"./textures/outerwall.jpg"
+    },
+    {
+      "kind":"cube",
+      "position": [0.0, 0.0, -5.0],
+      "size": [10.0, 1.5, 0.1],
+      "texture":"./textures/woodfloor.jpg"
+    },
+    {
+      "kind": "sphere",
+      "position": [8.0, 0.0, -5.0],
+      "size": [1.0, 1.0, 1.0],
+      "texture":"./textures/orbTexture2.png",
+      "behaviors": {
+        "PowerUpBob": [0.1, 5],
+        "DeleteOnCollision": []
+
+      }
     }
   ],
   "behaviors": {
@@ -32,6 +55,7 @@
     "YRotation": "behavior_y_rotation",
     "ZRotation": "behavior_z_rotation",
     "PowerUpBob": "behavior_power_up",
-    "Jump": "behavior_jump"
+    "Jump": "behavior_jump",
+    "DeleteOnCollision": "behavior_delete"
   }
 }

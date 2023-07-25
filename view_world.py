@@ -4,7 +4,7 @@ from OpenGL.GLU import *
 from PIL import Image
 
 
-class CubeView(ViewObject):
+class WorldView(ViewObject):
     def __init__(self, game_object):
         self.game_object = game_object
         if game_object.texture is not None:
@@ -75,10 +75,10 @@ class CubeView(ViewObject):
         glColor3f(1.0, 1.0, 1.0) if self.texture_id is not None else glColor3f(0.0, 1.0, 1.0)
         # Top face
         glNormal3f(0.0, 1.0, 0.0)
-        glTexCoord2f(0.0, 1.0); glVertex3d(-0.5, 0.5, 0.5)
+        glTexCoord2f(0.0, 100.0); glVertex3d(-0.5, 0.5, 0.5)
         glTexCoord2f(0.0, 0.0); glVertex3d(0.5, 0.5, 0.5)
-        glTexCoord2f(1.0, 0.0); glVertex3d(0.5, 0.5, -0.5)
-        glTexCoord2f(1.0, 1.0); glVertex3d(-0.5, 0.5, -0.5)
+        glTexCoord2f(100.0, 0.0); glVertex3d(0.5, 0.5, -0.5)
+        glTexCoord2f(100.0, 100.0); glVertex3d(-0.5, 0.5, -0.5)
 
         glColor3f(1.0, 1.0, 1.0) if self.texture_id is not None else glColor3f(1.0, 1.0, 1.0)
         # Bottom face

@@ -11,6 +11,7 @@ import numpy
 import pygame
 import random
 from game_logic import GameLogic
+from view_world import WorldView
 
 
 class PlayerView:
@@ -174,6 +175,9 @@ class PlayerView:
 
         if game_object.kind == "player":
             self.player = game_object
+
+        if game_object.kind == 'world':
+            self.view_objects[game_object.id] = WorldView(game_object)
 
     def prepare_3d(self):
         glViewport(0, 0, self.window_width, self.window_height)
