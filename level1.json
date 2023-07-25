@@ -1,0 +1,30 @@
+{
+  "objects": [
+    {
+      "kind": "player",
+      "position": [0.0, 0.0, 0.0],
+      "behaviors": {
+        "KeyMove": [0.1],
+        "MouseRotation": [0.1],
+        "BlockedByObjects": [],
+        "Jump": [10.0, 0.5]
+      }
+    },
+    {
+      "kind": "cube",
+      "position": [0.0, 0.0, -15.0],
+      "size": [2.0, 2.0, 2.0]
+    }
+  ],
+  "behaviors": {
+    "KeyMove": "behavior_key_move",
+    "MouseRotation": "behavior_mouse_rotation",
+    "BlockedByObjects": "behavior_collision",
+    "Gravity": "behavior_gravity",
+    "XRotation": "behavior_x_rotation",
+    "YRotation": "behavior_y_rotation",
+    "ZRotation": "behavior_z_rotation",
+    "PowerUpBob": "behavior_power_up",
+    "Jump": "behavior_jump"
+  }
+}

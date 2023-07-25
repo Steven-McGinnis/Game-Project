@@ -3,11 +3,9 @@ from OpenGL.GLU import *
 from pubsub import pub
 from pygame.locals import *
 from view_cube import CubeView
-from view_floor import FloorView
 from view_sphere import SphereView
 from game_object import GameObject
 from view_billboard_cube import BillboardCubeView
-from view_wall import WallView
 from behavior_jump import Jump
 from localize import _
 from localize import Localize

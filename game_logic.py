@@ -10,6 +10,8 @@ from behavior_flying import Flying
 from behavior_power_up import PowerUpBob
 from pubsub import pub
 import numpy as np
+import json
+import importlib
 
 
 class GameLogic:
@@ -44,11 +46,33 @@ class GameLogic:
         pub.sendMessage("create", game_object=obj)
         return obj
 
-    def load_world(self):
-        self.create_environment()
-        self.create_level_objects()
+    def load_world(self, filename):
+        self.game_objects = {}
 
-        player = self.load_player()
+        with open(filename) as infile:
+            level_data = json.load(infile)
+
+            if not "objects" in level_data:
+                return False
+
+            for game_object in level_data["objects"]:
+                size = [1.0, 1.0, 1.0]
+                if "size" in game_object:
+                    size = game_object["size"]
+
+                obj = self.create_object(
+                    game_object["kind"], game_object["position"], size
+                )
+
+                if "behaviors" not in game_object:
+                    continue
+
+                for behavior in game_object["behaviors"]:
+                    module = importlib.import_module(level_data["behaviors"][behavior])
+                    class_ = getattr(module, behavior)
+                    instance = class_(*game_object["behaviors"][behavior])
+
+                    obj.add_behavior(instance)
 
     def get_property(self, key):
         if key in self.properties:
@@ -86,18 +110,3 @@ class GameLogic:
         #     Flying(0.9, 0.5)
         # )  # 3.0 for movement speed, 0.5 for rotation speed
         return player
-
-    def create_environment(self):
-        ground = self.create_object("floor", [0.0, -1.1, 0.0], [50.0, 50, 50.0])
-        ground._x_rotation = 90
-
-        floor = self.create_object("wood_floor", [0.0, -1.0, 0.0], [1.0, 1.0, 1.0])
-        floor._x_rotation = 90
-
-        wall = self.create_object("outer_wall", [-37.5, 5, 50], [1.0, 1.0, 1.0])
-        wall = self.create_object("outer_wall", [-10, 5, 50], [1.0, 1.0, 1.0])
-
-    def create_level_objects(self):
-        sphere = self.create_object("sphere", [15, 0, -10], [1.0, 1.0, 1.0])
-        sphere.add_behavior(XRotation(0.5))
-        sphere.add_behavior(PowerUpBob(0.5, 1))
