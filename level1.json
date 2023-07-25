@@ -14,12 +14,13 @@
     {
       "kind": "cube",
       "position": [0.0, 0.0, -10.0],
-      "size": [1.0, 1.0, 1.0]
+      "size": [1.0, 1.0, 1.0] 
     },
     {
       "kind": "cube",
       "position": [0.0, -1.0, 0.0],
-      "size": [2.0, 10.0, 10.0]
+      "size": [100.0, 1.0, 100.0],
+      "texture":"./textures/grassSeamless.png" 
     }
   ],
   "behaviors": {

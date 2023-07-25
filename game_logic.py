@@ -32,13 +32,14 @@ class GameLogic:
             GameLogic.game_objects[id].tick()
 
     @staticmethod
-    def create_object(kind, position, size):
-        obj = GameObject(kind, GameLogic.next_id, position, size)
+    def create_object(kind, position, size, texture=None):
+        obj = GameObject(kind, GameLogic.next_id, position, size, texture)
         GameLogic.next_id += 1
         GameLogic.game_objects[obj.id] = obj
 
         pub.sendMessage("create", game_object=obj)
         return obj
+
 
     @staticmethod
     def load_world(filename):
@@ -55,9 +56,15 @@ class GameLogic:
                 if "size" in game_object:
                     size = game_object["size"]
 
+                if "texture" in game_object:
+                    texture = game_object["texture"]
+                else:
+                    texture = None
+
                 obj = GameLogic.create_object(
-                    game_object["kind"], game_object["position"], size
+                    game_object["kind"], game_object["position"], size, texture
                 )
+                print("Created object", obj.texture)
 
                 if "behaviors" not in game_object:
                     continue

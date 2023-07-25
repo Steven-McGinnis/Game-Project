@@ -1,14 +1,15 @@
 class GameObject:
-    def __init__(self, kind, id, position, size):
+    def __init__(self, kind, id, position, size, texture=None):
         self.properties = {}
         self.position = position
         self.id = id
         self.kind = kind
         self.size = size
+        self.texture = texture
         self.x_rotation = 0
         self.y_rotation = 0
         self.z_rotation = 0
-
+        print("Created object", self.texture)
         self.behaviors = []
 
         self.collisions = []
