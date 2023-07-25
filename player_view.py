@@ -142,6 +142,7 @@ class PlayerView:
 
             self.enable_lighting()
 
+            glClearColor(0.53, 0.81, 0.92, 1.0)
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)  # type: ignore
             glPushMatrix()
 
@@ -270,6 +271,7 @@ class PlayerView:
 
         glEnable(GL_DEPTH_TEST)
         glDepthMask(GL_TRUE)
+        
 
     def render_health_stamina(self):
         glEnable(GL_TEXTURE_2D)
