@@ -7,13 +7,19 @@
         "KeyMove": [0.1],
         "MouseRotation": [0.1],
         "BlockedByObjects": [],
-        "Jump": [10.0, 0.5]
+        "Jump": [0.5, 0.05],
+        "Gravity": [0.1]
       }
     },
     {
       "kind": "cube",
-      "position": [0.0, 0.0, -15.0],
-      "size": [2.0, 2.0, 2.0]
+      "position": [0.0, 0.0, -10.0],
+      "size": [1.0, 1.0, 1.0]
+    },
+    {
+      "kind": "cube",
+      "position": [0.0, -1.0, 0.0],
+      "size": [2.0, 10.0, 10.0]
     }
   ],
   "behaviors": {

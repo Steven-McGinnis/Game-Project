@@ -1,5 +1,6 @@
 class GameObject:
     def __init__(self, kind, id, position, size):
+        self.properties = {}
         self.position = position
         self.id = id
         self.kind = kind
@@ -20,11 +21,11 @@ class GameObject:
     @property
     def moved(self):
         return self._moved
-    
+
     @property
     def kind(self):
         return self._kind
-    
+
     @kind.setter
     def kind(self, value):
         self._kind = value
@@ -32,7 +33,7 @@ class GameObject:
     @property
     def id(self):
         return self._id
-    
+
     @id.setter
     def id(self, value):
         self._id = value
@@ -40,7 +41,7 @@ class GameObject:
     @property
     def position(self):
         return self._position
-    
+
     @position.setter
     def position(self, value):
         self._position = value
@@ -48,7 +49,7 @@ class GameObject:
     @property
     def x_rotation(self):
         return self._x_rotation
-    
+
     @x_rotation.setter
     def x_rotation(self, value):
         self._x_rotation = value
@@ -56,7 +57,7 @@ class GameObject:
     @property
     def y_rotation(self):
         return self._y_rotation
-    
+
     @y_rotation.setter
     def y_rotation(self, value):
         self._y_rotation = value
@@ -64,7 +65,7 @@ class GameObject:
     @property
     def z_rotation(self):
         return self._z_rotation
-    
+
     @z_rotation.setter
     def z_rotation(self, value):
         self._z_rotation = value
@@ -72,17 +73,27 @@ class GameObject:
     @property
     def size(self):
         return self._size
-    
+
     @size.setter
     def size(self, value):
         self._size = value
 
     def tick(self):
+        self._moved = False
         for behavior in self.behaviors:
             behavior.tick()
+
         self.collisions = []
-        self._moved = False
 
     def clicked(self):
         for behavior in self.behaviors:
             behavior.clicked()
+
+    def get_property(self, key, default=None):
+        if key in self.properties:
+            return self.properties[key]
+
+        return default
+
+    def set_property(self, key, value):
+        self.properties[key] = value

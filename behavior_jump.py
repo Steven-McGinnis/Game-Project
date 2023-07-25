@@ -1,26 +1,33 @@
 from behavior import Behavior
+from pubsub import pub
+
 
 class Jump(Behavior):
-    def __init__(self, jump_speed, jump_height):
-        self.jump_speed = jump_speed
-        self.jump_height = jump_height
-        self.is_jumping = False
-        self.elapsed_time = 0 
+    def __init__(self, speed, adjust):
+        super(Jump, self).__init__()
 
-    def tick(self):
-        if self.is_jumping:
-            progress = self.elapsed_time / self.jump_speed
+        self.speed = speed
+        self.adjust = adjust
+        self.current = self.speed
 
-            if progress > 1:
-                self.is_jumping = False
-                self.elapsed_time = 0
-                self.game_object.position[1] = 0 #type: ignore
-            else:
-                height = 4 * self.jump_height * progress * (1 - progress)
-                self.game_object.position[1] = height #type: ignore
-                self.elapsed_time += 1
+        self.jumping = False
+
+        pub.subscribe(self.jump, "key-jump")
 
     def jump(self):
-        if not self.is_jumping:
-            self.is_jumping = True
-            self.elapsed_time = 0
+        if not self.game_object.get_property("falling"):  # type: ignore
+            self.jumping = True
+
+    def tick(self):
+        if not self.jumping:
+            return
+
+        if self.current <= 0.0:
+            self.jumping = False
+            self.current = self.speed
+            return
+
+        self.game_object.position[1] += self.current  # type: ignore
+        self.current -= self.adjust
+        self.game_object._moved = True  # type: ignore
+        self.current -= self.adjust

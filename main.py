@@ -5,13 +5,14 @@ from localize import Localize
 
 class Main:
     def go(self):
-        self.game_logic.load_world("level1.json")
+        GameLogic.load_world("level1.json")
 
         while True:
+            GameLogic.tick()
             for instance in self.instances:
                 instance.tick()
 
-            if self.game_logic.get_property("quit"):
+            if GameLogic.get_property("quit"):
                 break
 
     def __init__(self):
@@ -20,9 +21,8 @@ class Main:
         Localize.load()
 
         # create instances
-        self.game_logic = GameLogic()
-        self.instances.append(self.game_logic)
-        self.instances.append(PlayerView(self.game_logic))
+        self.instances.append(GameLogic)
+        self.instances.append(PlayerView())
 
 
 if __name__ == "__main__":

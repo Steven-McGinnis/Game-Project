@@ -15,39 +15,34 @@ import importlib
 
 
 class GameLogic:
-    def __init__(self):
-        self.properties = {}
-        self.game_objects = {}
+    properties = {}
+    game_objects = {}
 
-        self.next_id = 0
+    next_id = 0
 
-    def tick(self):
-        for game_object in self.game_objects:
-            if self.game_objects[game_object].moved:
-                for other in self.game_objects:
-                    if self.game_objects[game_object] == self.game_objects[other]:
-                        continue
+    @staticmethod
+    def tick():
+        for game_object in GameLogic.game_objects:
+            if GameLogic.game_objects[game_object].moved:
+                for other in GameLogic.game_objects:
+                    if GameLogic.collide(GameLogic.game_objects[game_object],GameLogic.game_objects[other],):
+                        GameLogic.game_objects[game_object].collisions.append(GameLogic.game_objects[other])
 
-                    if self.collide(
-                        self.game_objects[game_object], self.game_objects[other]
-                    ):
-                        self.game_objects[game_object].collisions.append(
-                            self.game_objects[other]
-                        )
+        for id in GameLogic.game_objects:
+            GameLogic.game_objects[id].tick()
 
-        for id in self.game_objects:
-            self.game_objects[id].tick()
-
-    def create_object(self, kind, position, size):
-        obj = GameObject(kind, self.next_id, position, size)
-        self.next_id += 1
-        self.game_objects[obj.id] = obj
+    @staticmethod
+    def create_object(kind, position, size):
+        obj = GameObject(kind, GameLogic.next_id, position, size)
+        GameLogic.next_id += 1
+        GameLogic.game_objects[obj.id] = obj
 
         pub.sendMessage("create", game_object=obj)
         return obj
 
-    def load_world(self, filename):
-        self.game_objects = {}
+    @staticmethod
+    def load_world(filename):
+        GameLogic.game_objects = {}
 
         with open(filename) as infile:
             level_data = json.load(infile)
@@ -60,7 +55,7 @@ class GameLogic:
                 if "size" in game_object:
                     size = game_object["size"]
 
-                obj = self.create_object(
+                obj = GameLogic.create_object(
                     game_object["kind"], game_object["position"], size
                 )
 
@@ -74,39 +69,42 @@ class GameLogic:
 
                     obj.add_behavior(instance)
 
-    def get_property(self, key):
-        if key in self.properties:
-            return self.properties[key]
+    @staticmethod
+    def get_property(key, default=None):
+        if key in GameLogic.properties:
+            return GameLogic.properties[key]
 
-        return None
+        return default
 
-    def set_property(self, key, value):
-        self.properties[key] = value
+    @staticmethod
+    def set_property(key, value):
+        GameLogic.properties[key] = value
 
-    def collide(self, object1, object2):
-        radius1 = max(object1.size)
+    @staticmethod
+    def collide(object1, object2):
+        if object1 == object2:
+            return False
+        
+        # Cuboid detection
+        minx1 = object1.position[0] - object1.size[0] / 2.0
+        maxx1 = object1.position[0] + object1.size[0] / 2.0
+        miny1 = object1.position[1] - object1.size[1] / 2.0
+        maxy1 = object1.position[1] + object1.size[1] / 2.0
+        minz1 = object1.position[2] - object1.size[2] / 2.0
+        maxz1 = object1.position[2] + object1.size[2] / 2.0
 
-        mypos = np.array(object1.position)
-        otherpos = np.array(object2.position)
+        minx2 = object2.position[0] - object2.size[0] / 2.0
+        maxx2 = object2.position[0] + object2.size[0] / 2.0
+        miny2 = object2.position[1] - object2.size[1] / 2.0
+        maxy2 = object2.position[1] + object2.size[1] / 2.0
+        minz2 = object2.position[2] - object2.size[2] / 2.0
+        maxz2 = object2.position[2] + object2.size[2] / 2.0
 
-        distance = np.linalg.norm(mypos - otherpos)
-        direction_vector = (mypos - otherpos) / distance
-
-        max_direction = max(direction_vector, key=abs)
-
-        indices = [i for i, j in enumerate(direction_vector) if j == max_direction]
-        sizes = [object2.size[j] for i, j in enumerate(indices)]
-        radius2 = max(sizes)
-
-        return distance < radius1 + radius2
-
-    def load_player(self):
-        player = self.create_object("player", [0.0, 0.0, 0.0], [1.0, 1.0, 1.0])
-        player.add_behavior(KeyMove(0.1))
-        player.add_behavior(MouseRotation(0.1))
-        player.add_behavior(BlockedByObjects())
-        player.add_behavior(Jump(10, 0.5))
-        # player.add_behavior(
-        #     Flying(0.9, 0.5)
-        # )  # 3.0 for movement speed, 0.5 for rotation speed
-        return player
+        return (
+            minx1 < maxx2
+            and minx2 < maxx1
+            and miny1 < maxy2
+            and miny2 < maxy1
+            and minz1 < maxz2
+            and minz2 < maxz1
+        )

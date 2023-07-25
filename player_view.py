@@ -4,19 +4,17 @@ from pubsub import pub
 from pygame.locals import *
 from view_cube import CubeView
 from view_sphere import SphereView
-from game_object import GameObject
 from view_billboard_cube import BillboardCubeView
-from behavior_jump import Jump
 from localize import _
 from localize import Localize
 import numpy
 import pygame
 import random
+from game_logic import GameLogic
 
 
 class PlayerView:
-    def __init__(self, game_logic):
-        self.game_logic = game_logic
+    def __init__(self):
         self.view_objects = {}
         self.click_log = []
         self.player = None
@@ -83,7 +81,7 @@ class PlayerView:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                self.game_logic.set_property("quit", True)
+                GameLogic.set_property("quit", True)
                 return
 
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -93,14 +91,11 @@ class PlayerView:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
-                    self.game_logic.set_property("quit", True)
+                    GameLogic.set_property("quit", True)
                     return
 
                 if event.key == pygame.K_SPACE:
-                    if self.player:
-                        for behavior in self.player.behaviors:
-                            if isinstance(behavior, Jump):
-                                behavior.jump()
+                    pub.sendMessage("key-jump")
 
                 if event.key == pygame.K_p:
                     self.paused = not self.paused
@@ -121,16 +116,15 @@ class PlayerView:
             keypress = pygame.key.get_pressed()
             if keypress[pygame.K_w]:
                 pub.sendMessage("key-w")
-                self.use_stamina(1)
+
             if keypress[pygame.K_s]:
                 pub.sendMessage("key-s")
-                self.use_stamina(1)
+
             if keypress[pygame.K_a]:
                 pub.sendMessage("key-a")
-                self.use_stamina(1)
+
             if keypress[pygame.K_d]:
                 pub.sendMessage("key-d")
-                self.use_stamina(1)
 
             pub.sendMessage("rotate-y", amount=mouseMove[0])
             pub.sendMessage("rotate-x", amount=mouseMove[1])
@@ -175,23 +169,11 @@ class PlayerView:
         if game_object.kind == "sphere":
             self.view_objects[game_object.id] = SphereView(game_object)
 
-        if game_object.kind == "floor":
-            texture_file = "./textures/grassSeamless.png"
-            self.view_objects[game_object.id] = FloorView(game_object, texture_file)
-
         if game_object.kind == "billboard_cube":
             self.view_objects[game_object.id] = BillboardCubeView(game_object)
 
         if game_object.kind == "player":
             self.player = game_object
-
-        if game_object.kind == "wood_floor":
-            texture_file = "./textures/woodfloor.jpg"
-            self.view_objects[game_object.id] = FloorView(game_object, texture_file)
-
-        if game_object.kind == "outer_wall":
-            texture_file = "./textures/outerwall.jpg"
-            self.view_objects[game_object.id] = WallView(game_object, texture_file)
 
     def prepare_3d(self):
         glViewport(0, 0, self.window_width, self.window_height)
