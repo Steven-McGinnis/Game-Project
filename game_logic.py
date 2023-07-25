@@ -60,18 +60,19 @@ class GameLogic:
         self.properties[key] = value
 
     def collide(self, object1, object2):
-        if object1.kind == "floor" or object2.kind == "floor":
-            radius1 = min(object1.size)
-            radius2 = min(object2.size)
-        else:
-            radius1 = max(object1.size)
-            radius2 = max(object2.size)
+        radius1 = max(object1.size)
 
         mypos = np.array(object1.position)
         otherpos = np.array(object2.position)
 
         distance = np.linalg.norm(mypos - otherpos)
         direction_vector = (mypos - otherpos) / distance
+
+        max_direction = max(direction_vector, key=abs)
+
+        indices = [i for i, j in enumerate(direction_vector) if j == max_direction]
+        sizes = [object2.size[j] for i, j in enumerate(indices)]
+        radius2 = max(sizes)
 
         return distance < radius1 + radius2
 
