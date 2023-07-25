@@ -33,8 +33,8 @@ class GameLogic:
             GameLogic.game_objects[id].tick()
 
     @staticmethod
-    def create_object(kind, position, size, texture=None):
-        obj = GameObject(kind, GameLogic.next_id, position, size, texture)
+    def create_object(kind, position, size, texture=None, rotation=None):
+        obj = GameObject(kind, GameLogic.next_id, position, size, texture, rotation)
         GameLogic.next_id += 1
         GameLogic.game_objects[obj.id] = obj
 
@@ -54,16 +54,20 @@ class GameLogic:
 
             for game_object in level_data["objects"]:
                 size = [1.0, 1.0, 1.0]
+                texture = None
+                rotation = None
                 if "size" in game_object:
                     size = game_object["size"]
 
                 if "texture" in game_object:
                     texture = game_object["texture"]
-                else:
-                    texture = None
+                
+                if "rotation" in game_object:
+                    print("Rotation", game_object["rotation"])
+                    rotation = game_object["rotation"]
 
                 obj = GameLogic.create_object(
-                    game_object["kind"], game_object["position"], size, texture
+                    game_object["kind"], game_object["position"], size, texture, rotation
                 )
                 print("Created object", obj.texture)
 

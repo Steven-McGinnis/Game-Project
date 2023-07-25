@@ -26,19 +26,50 @@
       "kind":"cube",
       "position": [0.0, 0.0, -5.0],
       "size": [10.0, 1.5, 0.1],
-      "texture":"./textures/outerwall.jpg"
+      "texture":"./textures/outerwall.jpg",
+      "Note": "Front Wall" 
+    },
+    {
+      "kind":"cube",
+      "position": [0.0, 1.5, -5.0],
+      "size": [10.0, 1.5, 0.1],
+      "texture":"./textures/outerwall.jpg",
+      "Note": "Front Wall top half" 
     },
     {
       "kind":"cube",
       "position": [0.0, 0.0, -15.0],
       "size": [10.0, 1.5, 0.1],
-      "texture":"./textures/outerwall.jpg"
+      "texture":"./textures/outerwall.jpg",
+      "Note": "Back Wall"
+    },
+    {
+      "kind":"cube",
+      "position": [0.0, 1.5, -15.0],
+      "size": [10.0, 1.5, 0.1],
+      "texture":"./textures/outerwall.jpg",
+      "Note": "Back Wall Top Half"
     },
     {
       "kind":"cube",
       "position": [5.0, 0.0, -10.0],
       "size": [0.1, 1.5, 10.0],
-      "texture":"./textures/outerwall.jpg"
+      "texture":"./textures/outerwall.jpg",
+      "Note": "Right Wall"
+    },
+    {
+      "kind":"cube",
+      "position": [5.0, 1.5, -6],
+      "size": [0.1, 1.5, 2.0],
+      "texture":"./textures/outerwall.jpg",
+      "Note": "Right Wall Top Half Piece"
+    },
+    {
+      "kind":"cube",
+      "position": [5.0, 1.5, -12.0],
+      "size": [0.1, 1.5, 6.0],
+      "texture":"./textures/outerwall.jpg",
+      "Note": "Right Wall Top Half Piece"
     },
     {
       "kind":"cube",
@@ -54,6 +85,13 @@
     },
     {
       "kind":"cube",
+      "position": [-5.0, 1.5, -10.0],
+      "size": [0.1, 1.5, 10.0],
+      "texture":"./textures/outerwall.jpg",
+      "Note": "Right Wall"
+    },
+    {
+      "kind":"cube",
       "position": [0.0, -0.5, -10.0],
       "size": [10.0, 0.01, 10],
       "texture":"./textures/woodfloor.jpg"
@@ -62,6 +100,13 @@
       "kind":"cube",
       "position": [0.0, 0.75, -10.0],
       "size": [10.0, 0.01, 10],
+      "texture":"./textures/woodfloor.jpg"
+    },
+    {
+      "kind":"cube",
+      "position": [0.0, 0.0, -10.0],
+      "size": [10.0, 0.01, 10],
+      "rotation": [90.0, 0.0, 0.0],
       "texture":"./textures/woodfloor.jpg"
     },
     {

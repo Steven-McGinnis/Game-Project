@@ -1,5 +1,5 @@
 class GameObject:
-    def __init__(self, kind, id, position, size, texture=None):
+    def __init__(self, kind, id, position, size, texture=None, rotation= None):
         self.properties = {}
         self.position = position
         self.id = id
@@ -9,6 +9,12 @@ class GameObject:
         self.x_rotation = 0
         self.y_rotation = 0
         self.z_rotation = 0
+
+        print('Rotation', rotation)
+        # Assign rotation if it's passed
+        if rotation is not None:
+            self.x_rotation, self.y_rotation, self.z_rotation = rotation
+
         print("Created object", self.texture)
         self.behaviors = []
 
