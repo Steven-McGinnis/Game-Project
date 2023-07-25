@@ -14,7 +14,10 @@
     {
       "kind": "cube",
       "position": [0.0, 0.0, -10.0],
-      "size": [1.0, 1.0, 1.0] 
+      "size": [0.5, 0.5, 0.5],
+      "behaviors": {
+        "XRotation": [0.1]
+      }
     },
     {
       "kind": "world",
@@ -104,19 +107,27 @@
     },
     {
       "kind":"cube",
-      "position": [0.0, 0.0, -10.0],
-      "size": [10.0, 0.01, 10],
-      "rotation": [90.0, 0.0, 0.0],
-      "texture":"./textures/woodfloor.jpg"
+      "position": [0.0, 3.0, -7],
+      "size": [10.0, 0.01, 6.5],
+      "rotation": [20.0, 0.0, 0.0],
+      "texture":"./textures/brick.jpg"
+    },
+    {
+      "kind":"cube",
+      "position": [0.0, 3.0, -13],
+      "size": [10.0, 0.01, 6.5],
+      "rotation": [-20.0, 0.0, 0.0],
+      "texture":"./textures/brick.jpg"
     },
     {
       "kind": "sphere",
       "position": [8.0, 0.0, -5.0],
       "size": [0.5, 0.5, 0.5],
       "texture":"./textures/orbTexture2.png",
+      "identifier": "power_up",
       "behaviors": {
         "PowerUpBob": [0.1, 5],
-        "DeleteOnCollision": []
+        "DeleteOnClick": []
       }
     }
   ],
@@ -130,6 +141,6 @@
     "ZRotation": "behavior_z_rotation",
     "PowerUpBob": "behavior_power_up",
     "Jump": "behavior_jump",
-    "DeleteOnCollision": "behavior_delete"
+    "DeleteOnClick": "behavior_delete_on_click"
   }
 }

@@ -14,7 +14,6 @@ class SphereView(ViewObject):
 
         if game_object.texture is not None:
             self.texture_id = self.load_texture(game_object.texture)
-            print("Loaded texture", game_object.texture)
         else:
             self.texture_id = None
 

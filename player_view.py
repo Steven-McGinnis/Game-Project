@@ -21,6 +21,7 @@ class PlayerView:
         self.player = None
         self.clock = pygame.time.Clock()
         pub.subscribe(self.new_game_object, "create")
+        pub.subscribe(self.delete_game_object, "delete")
 
         self.paused = False
 
@@ -250,9 +251,10 @@ class PlayerView:
         closest.clicked()
 
         self.click_log.append(
-            _("Object clicked: ") + str(closest.id)
+            _("Object clicked: ") + str(closest.kind)
         )  # Add the ID to the log
         self.click_log = self.click_log[-5:]
+
 
     def render_hud(self):
         glDisable(GL_DEPTH_TEST)
@@ -372,3 +374,7 @@ class PlayerView:
     def recover_stamina(self, amount):
         self.stamina += amount
         self.update_health_stamina_textures()
+
+    def delete_game_object(self, id):
+        if id in self.view_objects:
+            del self.view_objects[id]
