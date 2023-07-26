@@ -149,25 +149,15 @@ class GameLogic:
         GameLogic.deletions = []
 
     @staticmethod
+    def order_objects(obj1, obj2):
+        if obj1.kind == "player":
+            return obj1, obj2
+        return obj2, obj1
+
+    @staticmethod
     def collisionType(obj1, obj2):
-        if obj1.kind == "player" and obj2.identifier == "power_up":
-            print("power up", obj2.identifier)
-            pub.sendMessage("collision", obj=obj2)
+        player, other = GameLogic.order_objects(obj1, obj2)
 
-        elif obj2.kind == "player" and obj1.identifier == "power_up":
-            pub.sendMessage("collision", obj=obj1)
-            print("power up", obj1.identifier)
-
-        elif obj1.kind == "player" and obj2.identifier == "portal":
-            print("New Type", obj2.identifier)
-            pub.sendMessage("collision", obj=obj2)
-
-        elif obj2.kind == "player" and obj1.identifier == "portal":
-            pub.sendMessage("collision", obj=obj1)
-            print("New Type", obj1.identifier)
-
-        elif obj1.kind == "player" and obj2.identifier == "inverse":
-            pub.sendMessage("collision", obj=obj2)
-
-        elif obj2.kind == "player" and obj1.identifier == "inverse":
-            pub.sendMessage("collision", obj=obj1)
+        if other.identifier in ["power_up", "portal", "inverse"]:
+            print(other.identifier, other.identifier)
+            pub.sendMessage("collision", obj=other)
