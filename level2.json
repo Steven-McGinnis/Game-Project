@@ -92,7 +92,10 @@
       "position": [-2.0, 4, -22],
       "size": [2.0, 0.5, 2.0],
       "texture":"./textures/platform.jpg",
-      "Note": "platform" 
+      "Note": "platform",
+      "behaviors": {
+        "Platform":[[10.0, 2.0, -12], 0.05, true]
+      } 
     },
     {
       "kind":"cube",
@@ -124,6 +127,7 @@
     "GainSpeed": "behavior_gain_speed",
     "DeleteOnCollision": "behavior_delete_on_collision",
     "Portal": "behavior_portal",
-    "InverseGravity": "behavior_inverse_gravity"
+    "InverseGravity": "behavior_inverse_gravity",
+    "Platform": "behavior_platform"
   }
 }
