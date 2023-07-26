@@ -30,4 +30,4 @@ class DeleteOnCollision(Behavior):
                 pub.sendMessage(identifier)
 
             # This sends a message to delete from the view
-            pub.sendMessage("delete", game_object=self.game_object)
+            GameLogic.delete_object(obj)  # this is the fixed line

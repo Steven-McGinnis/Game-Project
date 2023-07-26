@@ -142,8 +142,9 @@ class GameLogic:
     @staticmethod
     def process_deletions():
         for obj in GameLogic.deletions:
-            del GameLogic.game_objects[obj.id]
-            pub.sendMessage("delete", game_object=obj)
+            if obj.id in GameLogic.game_objects:  # Check before deletion
+                del GameLogic.game_objects[obj.id]
+                pub.sendMessage("delete", game_object=obj)
 
         GameLogic.deletions = []
 
