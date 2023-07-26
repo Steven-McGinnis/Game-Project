@@ -22,6 +22,7 @@ class PlayerView:
         self.clock = pygame.time.Clock()
         pub.subscribe(self.new_game_object, "create")
         pub.subscribe(self.delete_game_object, "delete")
+        pub.subscribe(self.addAmmo, "ammo")
 
         self.paused = False
 
@@ -31,8 +32,10 @@ class PlayerView:
     def create_hud_variables(self):
         self.health = 100
         self.stamina = 100
+        self.ammo = 20
         self.health_texture = glGenTextures(1)
         self.stamina_texture = glGenTextures(1)
+        self.ammo_texture = glGenTextures(1)
         self.update_health_stamina_textures()
 
     def update_health_stamina_textures(self):
@@ -45,6 +48,11 @@ class PlayerView:
             _("Stamina: ") + str(self.stamina), True, (0, 0, 255), (0, 0, 0, 0)
         )
         self.update_texture(img, self.stamina_texture)
+
+        img = pygame.font.SysFont("Arial", 25).render(
+            _("Ammo: ") + str(self.ammo), True, (0, 255, 0), (0, 0, 0, 0)
+        )
+        self.update_texture(img, self.ammo_texture)
 
     def update_texture(self, img, texture):
         w, h = img.get_size()
@@ -128,6 +136,9 @@ class PlayerView:
             if keypress[pygame.K_d]:
                 pub.sendMessage("key-d")
 
+            if keypress[pygame.K_LSHIFT]:
+                self.use_stamina(1)
+
             pub.sendMessage("rotate-y", amount=mouseMove[0])
             pub.sendMessage("rotate-x", amount=mouseMove[1])
 
@@ -140,6 +151,10 @@ class PlayerView:
                     -self.player.position[2],
                 )
                 self.viewMatrix = glGetFloatv(GL_MODELVIEW_MATRIX)
+
+            if keypress[pygame.K_LSHIFT] == False and self.stamina < 100:
+                self.recover_stamina(1)
+
 
             self.enable_lighting()
 
@@ -249,6 +264,7 @@ class PlayerView:
             return
 
         closest.clicked()
+        self.shoot()
 
         self.click_log.append(
             _("Object clicked: ") + str(closest.kind)
@@ -280,11 +296,16 @@ class PlayerView:
 
         # Render Health
         glBindTexture(GL_TEXTURE_2D, self.health_texture)
-        self.render_text_quad(10, self.window_height - 40)  # Changed position here
+        self.render_text_quad(10, self.window_height - 40)
 
         # Render Stamina
         glBindTexture(GL_TEXTURE_2D, self.stamina_texture)
-        self.render_text_quad(10, self.window_height - 80)  # And here
+        self.render_text_quad(10, self.window_height - 80)
+
+        # Render Ammo
+        glBindTexture(GL_TEXTURE_2D, self.ammo_texture)
+        self.render_text_quad(10, self.window_height - 120)
+        
 
         glDisable(GL_TEXTURE_2D)
         glDisable(GL_BLEND)
@@ -368,13 +389,27 @@ class PlayerView:
         self.update_health_stamina_textures()
 
     def use_stamina(self, amount):
-        self.stamina -= amount
-        self.update_health_stamina_textures()
+        if self.stamina > 0: 
+            self.stamina -= amount
+            self.update_health_stamina_textures()
 
     def recover_stamina(self, amount):
-        self.stamina += amount
-        self.update_health_stamina_textures()
+        if self.stamina < 100:
+            self.stamina += amount
+            self.update_health_stamina_textures()
+
+        if self.stamina > 100:
+            self.stamina = 100
 
     def delete_game_object(self, id):
         if id in self.view_objects:
             del self.view_objects[id]
+
+    def addAmmo(self):
+        self.ammo += 21
+        self.update_health_stamina_textures()
+
+    def shoot(self):
+        if self.ammo > 0:
+            self.ammo -= 1
+            self.update_health_stamina_textures()

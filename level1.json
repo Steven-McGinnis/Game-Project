@@ -130,6 +130,18 @@
         "PowerUpBob": [0.1, 5],
         "DeleteOnClick": []
       }
+    },
+    {
+      "kind": "cube",
+      "position": [0.0, 0.0, -3],
+      "size": [0.5, 0.5, 0.5],
+      "texture":"./textures/ammo.jpg",
+      "identifier": "ammo",
+      "behaviors": {
+        "YRotation": [0.3],
+        "PowerUpBob": [0.1, 5],
+        "DeleteOnClick": []
+      }
     }
   ],
   "behaviors": {

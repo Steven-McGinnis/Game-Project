@@ -12,6 +12,9 @@ class DeleteOnClick(Behavior):
             if identifier == "power_up":
                 print("POWER UP")
                 pub.sendMessage("power_up")
+            if identifier == "ammo":
+                print("AMMO")
+                pub.sendMessage("ammo")
 
             # This sends a message to delete from the view 
             pub.sendMessage("delete", id=self.game_object.id) # type: ignore
