@@ -21,7 +21,8 @@
       "identifier": "portal",
       "behaviors": {
         "XRotation": [0.1],
-        "Portal": []
+        "Portal": [],
+        "DeleteOnCollision": []
       }
     },
     {
@@ -172,6 +173,7 @@
     "IceSlide": "behavior_ice",
     "Pickup": "behavior_pickup",
     "Switch": "behavior_switch",
-    "Disappear": "behavior_disappear"
+    "Disappear": "behavior_disappear",
+    "DeleteOnCollision": "behavior_delete_on_collision"
   }
 }

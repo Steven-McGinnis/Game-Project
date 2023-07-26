@@ -28,6 +28,7 @@ class GameLogic:
                 for other in GameLogic.game_objects.values():
                     if game_object != other and GameLogic.collide(game_object, other):
                         game_object.collisions.append(other)
+                        GameLogic.collisionType(game_object, other)
 
         for game_object in GameLogic.game_objects.values():
             game_object.tick()
@@ -145,3 +146,27 @@ class GameLogic:
             pub.sendMessage("delete", game_object=obj)
 
         GameLogic.deletions = []
+
+    @staticmethod
+    def collisionType(obj1, obj2):
+        if obj1.kind == "player" and obj2.identifier == "power_up":
+            print("power up", obj2.identifier)
+            pub.sendMessage("collision", obj=obj2)
+
+        elif obj2.kind == "player" and obj1.identifier == "power_up":
+            pub.sendMessage("collision", obj=obj1)
+            print("power up", obj1.identifier)
+
+        elif obj1.kind == "player" and obj2.identifier == "portal":
+            print("New Type", obj2.identifier)
+            pub.sendMessage("collision", obj=obj2)
+
+        elif obj2.kind == "player" and obj1.identifier == "portal":
+            pub.sendMessage("collision", obj=obj1)
+            print("New Type", obj1.identifier)
+
+        elif obj1.kind == "player" and obj2.identifier == "inverse":
+            pub.sendMessage("collision", obj=obj2)
+
+        elif obj2.kind == "player" and obj1.identifier == "inverse":
+            pub.sendMessage("collision", obj=obj1)

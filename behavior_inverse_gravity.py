@@ -1,6 +1,7 @@
 from behavior import Behavior
 from pubsub import pub
 
+
 class InverseGravity(Behavior):
     def __init__(self):
         super(InverseGravity, self).__init__()
@@ -9,6 +10,7 @@ class InverseGravity(Behavior):
         self.reversed = False
 
     def inverse_gravity(self):
+        print("inverse gravity")
         self.reversed = True
         pub.sendMessage("inverse_gravity")
 
