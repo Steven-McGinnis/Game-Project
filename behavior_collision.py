@@ -8,7 +8,7 @@ class BlockedByObjects(Behavior):
     def tick(self):
         if self.game_object.collisions:  # type: ignore
             mypos = np.array(self.game_object.position)  # type: ignore
-
+            
             for other in self.game_object.collisions:  # type: ignore
                 otherpos = np.array(other.position)
                 distance = np.linalg.norm(mypos - otherpos)

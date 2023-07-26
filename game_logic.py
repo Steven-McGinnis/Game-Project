@@ -26,14 +26,15 @@ class GameLogic:
 
     @staticmethod
     def tick():
-        for game_object in GameLogic.game_objects:
-            if GameLogic.game_objects[game_object].moved:
-                for other in GameLogic.game_objects:
-                    if GameLogic.collide(GameLogic.game_objects[game_object],GameLogic.game_objects[other],):
-                        GameLogic.game_objects[game_object].collisions.append(GameLogic.game_objects[other])
+        for game_object in GameLogic.game_objects.values():
+            if game_object.moved:
+                for other in GameLogic.game_objects.values():
+                    if game_object != other and GameLogic.collide(game_object, other):
+                        game_object.collisions.append(other)
+                        GameLogic.collisionType(game_object, other)
 
-        for id in GameLogic.game_objects:
-            GameLogic.game_objects[id].tick()
+        for game_object in GameLogic.game_objects.values():
+            game_object.tick()
 
     @staticmethod
     def create_object(kind, position, size, texture=None, rotation=None, identifier=None):
@@ -130,3 +131,13 @@ class GameLogic:
     def delete_object(id: int):
         if id in GameLogic.game_objects:  # type: ignore
             del GameLogic.game_objects[id]  # type: ignore
+
+    @staticmethod
+    def collisionType(obj1, obj2):
+        if obj1.kind == 'player' and obj2.identifier == 'power_up':
+            print("power up", obj2.identifier)
+            pub.sendMessage("collision", obj=obj2)
+        elif obj2.kind == 'player' and obj1.identifier == 'power_up':
+            pub.sendMessage("collision", obj=obj1)
+            print("power up", obj1.identifier)
+

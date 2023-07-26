@@ -128,7 +128,8 @@
       "identifier": "power_up",
       "behaviors": {
         "PowerUpBob": [0.1, 5],
-        "DeleteOnClick": []
+        "DeleteOnClick": [],
+        "DeleteOnCollision": []
       }
     },
     {
@@ -155,6 +156,7 @@
     "PowerUpBob": "behavior_power_up",
     "Jump": "behavior_jump",
     "DeleteOnClick": "behavior_delete_on_click",
-    "GainSpeed": "behavior_gain_speed"
+    "GainSpeed": "behavior_gain_speed",
+    "DeleteOnCollision": "behavior_delete_on_collision"
   }
 }

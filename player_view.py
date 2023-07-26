@@ -9,15 +9,15 @@ from localize import _
 from localize import Localize
 import numpy
 import pygame
-import random
 from game_logic import GameLogic
 from view_world import WorldView
+from logger import Logger
 
 
 class PlayerView:
     def __init__(self):
         self.view_objects = {}
-        self.click_log = []
+        self.logger = Logger()
         self.player = None
         self.clock = pygame.time.Clock()
         pub.subscribe(self.new_game_object, "create")
@@ -266,10 +266,7 @@ class PlayerView:
         closest.clicked()
         self.shoot()
 
-        self.click_log.append(
-            _("Object clicked: ") + str(closest.kind)
-        )  # Add the ID to the log
-        self.click_log = self.click_log[-5:]
+        self.logger.add_log(_("Object clicked: ") + str(closest.kind))
 
 
     def render_hud(self):
@@ -326,6 +323,7 @@ class PlayerView:
         glVertex2f(x, y)
         glEnd()
 
+    # Turn Lighting On
     def enable_lighting(self):
         light_ambient = [0.2, 0.2, 0.2, 1.0]
         light_diffuse = [1.0, 1.0, 1.0, 1.0]
@@ -338,13 +336,14 @@ class PlayerView:
         glEnable(GL_LIGHTING)
         glEnable(GL_LIGHT0)
 
+    # Turn Lighting Off
     def disable_lighting(self):
         glDisable(GL_LIGHTING)
 
     def render_log(self):
         # Display the click log
         y = self.window_height  # Adjust this as needed
-        for log_entry in self.click_log:
+        for log_entry in self.logger.get_log():
             img = pygame.font.SysFont("Arial", 20).render(
                 log_entry, True, (128, 128, 128)
             )  # Use gray color

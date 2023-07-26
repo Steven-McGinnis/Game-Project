@@ -19,6 +19,7 @@ class GameObject:
         self.behaviors = []
         self.collisions = []
         self._moved = False
+        self.collided = False
 
     def add_behavior(self, behavior):
         self.behaviors.append(behavior)
