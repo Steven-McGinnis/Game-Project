@@ -97,9 +97,9 @@ class GameObject:
 
         self.collisions = []
 
-    def clicked(self):
+    def clicked(self, game_object):
         for behavior in self.behaviors:
-            behavior.clicked()
+            behavior.clicked(game_object)
 
     def get_property(self, key, default=None):
         if key in self.properties:

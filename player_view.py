@@ -37,7 +37,12 @@ class PlayerView:
     def deleteAll(self):
         self.view_objects = {}
 
-    
+    def delete_game_object(self, game_object):
+        if game_object.id in self.view_objects:
+            del self.view_objects[game_object.id]
+
+
+
     def create_hud_variables(self):
         self.health = 100
         self.stamina = 100
@@ -272,7 +277,7 @@ class PlayerView:
             print(_("No closest object found"))
             return
 
-        closest.clicked()
+        closest.clicked(self.player)
         self.shoot()
 
         self.logger.add_log(_("Object clicked: ") + str(closest.kind))
@@ -408,10 +413,6 @@ class PlayerView:
 
         if self.stamina > 100:
             self.stamina = 100
-
-    def delete_game_object(self, id):
-        if id in self.view_objects:
-            del self.view_objects[id]
 
     def addAmmo(self):
         self.ammo += 21

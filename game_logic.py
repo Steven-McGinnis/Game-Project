@@ -17,12 +17,9 @@ import importlib
 class GameLogic:
     properties = {}
     game_objects = {}
+    deletions = []
 
     next_id = 0
-    @staticmethod
-    def init():
-        pub.subscribe(GameLogic.delete_object, 'delete')
-
 
     @staticmethod
     def tick():
@@ -31,20 +28,24 @@ class GameLogic:
                 for other in GameLogic.game_objects.values():
                     if game_object != other and GameLogic.collide(game_object, other):
                         game_object.collisions.append(other)
-                        GameLogic.collisionType(game_object, other)
 
         for game_object in GameLogic.game_objects.values():
             game_object.tick()
 
+        GameLogic.process_deletions()
+
     @staticmethod
-    def create_object(kind, position, size, texture=None, rotation=None, identifier=None):
-        obj = GameObject(kind, GameLogic.next_id, position, size, texture, rotation, identifier)
+    def create_object(
+        kind, position, size, texture=None, rotation=None, identifier=None
+    ):
+        obj = GameObject(
+            kind, GameLogic.next_id, position, size, texture, rotation, identifier
+        )
         GameLogic.next_id += 1
         GameLogic.game_objects[obj.id] = obj
 
         pub.sendMessage("create", game_object=obj)
         return obj
-
 
     @staticmethod
     def load_world(filename):
@@ -67,15 +68,20 @@ class GameLogic:
 
                 if "texture" in game_object:
                     texture = game_object["texture"]
-                
+
                 if "rotation" in game_object:
                     rotation = game_object["rotation"]
-                
+
                 if "identifier" in game_object:
                     identifier = game_object["identifier"]
 
                 obj = GameLogic.create_object(
-                    game_object["kind"], game_object["position"], size, texture, rotation, identifier
+                    game_object["kind"],
+                    game_object["position"],
+                    size,
+                    texture,
+                    rotation,
+                    identifier,
                 )
 
                 if "behaviors" not in game_object:
@@ -103,7 +109,7 @@ class GameLogic:
     def collide(object1, object2):
         if object1 == object2:
             return False
-        
+
         # Cuboid detection
         minx1 = object1.position[0] - object1.size[0] / 2.0
         maxx1 = object1.position[0] + object1.size[0] / 2.0
@@ -127,33 +133,15 @@ class GameLogic:
             and minz1 < maxz2
             and minz2 < maxz1
         )
-    
-    @staticmethod
-    def delete_object(id: int):
-        if id in GameLogic.game_objects:  # type: ignore
-            del GameLogic.game_objects[id]  # type: ignore
 
     @staticmethod
-    def collisionType(obj1, obj2):
-        if obj1.kind == 'player' and obj2.identifier == 'power_up':
-            print("power up", obj2.identifier)
-            pub.sendMessage("collision", obj=obj2)
-            
-        elif obj2.kind == 'player' and obj1.identifier == 'power_up':
-            pub.sendMessage("collision", obj=obj1)
-            print("power up", obj1.identifier)
+    def delete_object(obj):
+        GameLogic.deletions.append(obj)
 
-        # Add your new collision types below:
-        elif obj1.kind == 'player' and obj2.identifier == 'portal':
-            print("New Type", obj2.identifier)
-            pub.sendMessage("collision", obj=obj2)
+    @staticmethod
+    def process_deletions():
+        for obj in GameLogic.deletions:
+            del GameLogic.game_objects[obj.id]
+            pub.sendMessage("delete", game_object=obj)
 
-        elif obj2.kind == 'player' and obj1.identifier == 'portal':
-            pub.sendMessage("collision", obj=obj1)
-            print("New Type", obj1.identifier)
-
-        elif obj1.kind == 'player' and obj2.identifier == 'inverse':
-            pub.sendMessage("collision", obj=obj2)
-
-        elif obj2.kind == 'player' and obj1.identifier == 'inverse':
-            pub.sendMessage("collision", obj=obj1)
+        GameLogic.deletions = []
