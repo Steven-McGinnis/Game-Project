@@ -1,5 +1,6 @@
 {
     "power_up": "POWER UP",
     "ammo": "AMMO",
-    "portal": "PORTAL"
+    "portal": "PORTAL",
+    "inverse": "INVERSE"
 }

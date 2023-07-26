@@ -11,7 +11,7 @@ class GainSpeed(Behavior):
         self.speedup = False
 
     def gain_speed(self):
-        for behavior in self.game_object.behaviors:
+        for behavior in self.game_object.behaviors: # type: ignore
             if isinstance(behavior, KeyMove):
                 behavior.speed += .5
                 self.speedup = True
@@ -20,7 +20,7 @@ class GainSpeed(Behavior):
         if self.speedup:
             self.count += 1
             if self.count == 100:
-                for behavior in self.game_object.behaviors:
+                for behavior in self.game_object.behaviors: # type: ignore
                     if isinstance(behavior, KeyMove):
                         behavior.speed -= .5
                 self.count = 0

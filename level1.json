@@ -9,7 +9,9 @@
         "BlockedByObjects": [],
         "Jump": [0.5, 0.05],
         "Gravity": [0.1],
-        "GainSpeed": []
+        "GainSpeed": [],
+        "IceSlide": [0.1],
+        "Friction": [0.05]
       }
     },
     {
@@ -161,6 +163,8 @@
     "DeleteOnClick": "behavior_delete_on_click",
     "GainSpeed": "behavior_gain_speed",
     "DeleteOnCollision": "behavior_delete_on_collision",
-    "Portal": "behavior_portal"
+    "Portal": "behavior_portal",
+    "Friction": "behavior_friction",
+    "IceSlide": "behavior_ice"
   }
 }

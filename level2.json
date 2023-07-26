@@ -9,14 +9,105 @@
         "BlockedByObjects": [],
         "Jump": [0.5, 0.05],
         "Gravity": [0.1],
-        "GainSpeed": []
+        "GainSpeed": [],
+        "InverseGravity": []
       }
     },
     {
       "kind": "world",
       "position": [0.0, -1.0, 0.0],
       "size": [100.0, 1.0, 100.0],
-      "texture":"./textures/rock.jpg" 
+      "texture":"./textures/rock.jpg",
+      "Note": "ground"
+    },
+    {
+      "kind":"cube",
+      "position": [0.0, 0.0, -5.0],
+      "size": [2.0, 0.5, 2.0],
+      "texture":"./textures/platform.jpg",
+      "Note": "platform" 
+    },
+    {
+      "kind":"cube",
+      "position": [1.0, 1.0, -5.5],
+      "size": [2.0, 0.5, 2.0],
+      "texture":"./textures/platform.jpg",
+      "Note": "platform" 
+    },
+    {
+      "kind":"cube",
+      "position": [0.0, 2, -7.0],
+      "size": [2.0, 0.5, 2.0],
+      "texture":"./textures/platform.jpg",
+      "Note": "platform" 
+    },
+    {
+      "kind":"cube",
+      "position": [0.0, 3, -9],
+      "size": [2.0, 0.5, 2.0],
+      "texture":"./textures/platform.jpg",
+      "Note": "platform" 
+    },
+    {
+      "kind":"cube",
+      "position": [-1.0, 4, -9],
+      "size": [2.0, 0.5, 2.0],
+      "texture":"./textures/platform.jpg",
+      "Note": "platform" 
+    },    
+    {
+      "kind":"cube",
+      "position": [-2.0, 5, -11],
+      "size": [2.0, 0.5, 2.0],
+      "texture":"./textures/platform.jpg",
+      "Note": "platform" 
+    },
+    {
+      "kind":"cube",
+      "position": [-2.0, 3, -13],
+      "size": [2.0, 0.5, 2.0],
+      "texture":"./textures/platform.jpg",
+      "Note": "platform" 
+    },    {
+      "kind":"cube",
+      "position": [-2.0, 3, -15],
+      "size": [2.0, 0.5, 2.0],
+      "texture":"./textures/platform.jpg",
+      "Note": "platform" 
+    },    {
+      "kind":"cube",
+      "position": [-2.0, 3, -17],
+      "size": [2.0, 0.5, 2.0],
+      "texture":"./textures/platform.jpg",
+      "Note": "platform" 
+    },    {
+      "kind":"cube",
+      "position": [-2.0, 3, -20],
+      "size": [2.0, 0.5, 2.0],
+      "texture":"./textures/platform.jpg",
+      "Note": "platform" 
+    },
+    {
+      "kind":"cube",
+      "position": [-2.0, 4, -22],
+      "size": [2.0, 0.5, 2.0],
+      "texture":"./textures/platform.jpg",
+      "Note": "platform" 
+    },
+    {
+      "kind":"cube",
+      "position": [-2.0, 5, -22],
+      "size": [0.5, 0.5, 0.5],
+      "texture":"./textures/gravity.jpg",
+      "identifier": "inverse",
+      "Note": "platform",
+      "behaviors": {
+        "XRotation": [1],
+        "YRotation": [1],
+        "ZRotation": [1],
+        "PowerUpBob": [0.1, 5],
+        "DeleteOnCollision": []
+      }
     }
   ],
   "behaviors": {
@@ -32,6 +123,7 @@
     "DeleteOnClick": "behavior_delete_on_click",
     "GainSpeed": "behavior_gain_speed",
     "DeleteOnCollision": "behavior_delete_on_collision",
-    "Portal": "behavior_portal"
+    "Portal": "behavior_portal",
+    "InverseGravity": "behavior_inverse_gravity"
   }
 }

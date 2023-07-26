@@ -1,3 +1,5 @@
+from pubsub import pub
+
 class GameObject:
     def __init__(self, kind, id, position, size, texture=None, rotation= None, identifier=None):
         self.properties = {}
@@ -8,6 +10,7 @@ class GameObject:
         self.texture = texture
         self.identifier = identifier
         self.visible = True
+        self.gravity = True
         self.x_rotation = 0
         self.y_rotation = 0
         self.z_rotation = 0
@@ -20,6 +23,8 @@ class GameObject:
         self.collisions = []
         self._moved = False
         self.collided = False
+
+        pub.subscribe(self.inverseGravity, "inverse_gravity")
 
     def add_behavior(self, behavior):
         self.behaviors.append(behavior)
@@ -104,3 +109,6 @@ class GameObject:
 
     def set_property(self, key, value):
         self.properties[key] = value
+
+    def inverseGravity(self):
+        self.gravity = not self.gravity

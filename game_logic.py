@@ -151,3 +151,9 @@ class GameLogic:
         elif obj2.kind == 'player' and obj1.identifier == 'portal':
             pub.sendMessage("collision", obj=obj1)
             print("New Type", obj1.identifier)
+
+        elif obj1.kind == 'player' and obj2.identifier == 'inverse':
+            pub.sendMessage("collision", obj=obj2)
+
+        elif obj2.kind == 'player' and obj1.identifier == 'inverse':
+            pub.sendMessage("collision", obj=obj1)
