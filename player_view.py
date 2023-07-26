@@ -16,23 +16,28 @@ from logger import Logger
 
 class PlayerView:
     def __init__(self):
-        self.view_objects = {}
-        self.logger = Logger()
         self.player = None
+        self.paused = False
+        self.setup()
+        self.logger = Logger()
         self.clock = pygame.time.Clock()
+        
+        self.view_objects = {}
+        
+        self.subscribe_to_events()
+        self.create_hud_variables()
+
+    def subscribe_to_events(self):
         pub.subscribe(self.new_game_object, "create")
         pub.subscribe(self.delete_game_object, "delete")
         pub.subscribe(self.addAmmo, "ammo")
         pub.subscribe(self.deleteAll, "delete_all")
-
-        self.paused = False
-
-        self.setup()
-        self.create_hud_variables()
     
+    # Clears out all the View Objects for the Level
     def deleteAll(self):
         self.view_objects = {}
 
+    
     def create_hud_variables(self):
         self.health = 100
         self.stamina = 100
