@@ -48,6 +48,7 @@ class GameLogic:
 
     @staticmethod
     def load_world(filename):
+        pub.sendMessage("delete_all")
         GameLogic.game_objects = {}
 
         with open(filename) as infile:
@@ -137,7 +138,16 @@ class GameLogic:
         if obj1.kind == 'player' and obj2.identifier == 'power_up':
             print("power up", obj2.identifier)
             pub.sendMessage("collision", obj=obj2)
+            
         elif obj2.kind == 'player' and obj1.identifier == 'power_up':
             pub.sendMessage("collision", obj=obj1)
             print("power up", obj1.identifier)
 
+        # Add your new collision types below:
+        elif obj1.kind == 'player' and obj2.identifier == 'portal':
+            print("New Type", obj2.identifier)
+            pub.sendMessage("collision", obj=obj2)
+
+        elif obj2.kind == 'player' and obj1.identifier == 'portal':
+            pub.sendMessage("collision", obj=obj1)
+            print("New Type", obj1.identifier)

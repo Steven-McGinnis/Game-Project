@@ -23,11 +23,15 @@ class PlayerView:
         pub.subscribe(self.new_game_object, "create")
         pub.subscribe(self.delete_game_object, "delete")
         pub.subscribe(self.addAmmo, "ammo")
+        pub.subscribe(self.deleteAll, "delete_all")
 
         self.paused = False
 
         self.setup()
         self.create_hud_variables()
+    
+    def deleteAll(self):
+        self.view_objects = {}
 
     def create_hud_variables(self):
         self.health = 100

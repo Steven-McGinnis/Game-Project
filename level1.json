@@ -16,8 +16,11 @@
       "kind": "cube",
       "position": [0.0, 0.0, -10.0],
       "size": [0.5, 0.5, 0.5],
+      "identifier": "portal",
       "behaviors": {
-        "XRotation": [0.1]
+        "XRotation": [0.1],
+        "DeleteOnCollision": [],
+        "Portal": []
       }
     },
     {
@@ -157,6 +160,7 @@
     "Jump": "behavior_jump",
     "DeleteOnClick": "behavior_delete_on_click",
     "GainSpeed": "behavior_gain_speed",
-    "DeleteOnCollision": "behavior_delete_on_collision"
+    "DeleteOnCollision": "behavior_delete_on_collision",
+    "Portal": "behavior_portal"
   }
 }
