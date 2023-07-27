@@ -3,6 +3,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from PIL import Image
 from textures import Textures
+from movies import Movies
 
 
 class CubeViewColor(ViewObject):
@@ -17,6 +18,9 @@ class CubeViewColor(ViewObject):
         if face in self.game_object.faces:
             if self.game_object.faces[face]['type'] == 'texture':
                 Textures.activate_texture(self.game_object.faces[face]['value'])
+
+            if self.game_object.faces[face]['type'] == 'movie':
+                Movies.get_frame(self.game_object.faces[face]['value'])
     
 
 
