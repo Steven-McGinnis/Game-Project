@@ -2,7 +2,7 @@ from behavior import Behavior
 
 class EnableHighlight(Behavior):
     def hover(self, game_object):
-        self.game_object._highlight = True
+        self.game_object._highlight = True # type: ignore
 
 
 class HighlightColor(Behavior):
@@ -14,4 +14,4 @@ class HighlightColor(Behavior):
     def connect(self, game_object):
         super(HighlightColor, self).connect(game_object)
 
-        self.game_object.set_property("highlight_color", self.highlight_color)
+        self.game_object.set_property("highlight_color", self.highlight_color) # type: ignore

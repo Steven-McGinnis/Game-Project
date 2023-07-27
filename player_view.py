@@ -1,7 +1,7 @@
-from OpenGL.GL import *
-from OpenGL.GLU import *
+from OpenGL.GL import * # type: ignore
+from OpenGL.GLU import * # type: ignore
 from pubsub import pub
-from pygame.locals import *
+from pygame.locals import * # type: ignore
 from view_cube import CubeView
 from view_sphere import SphereView
 from view_cube2 import CubeViewColor

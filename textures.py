@@ -1,5 +1,5 @@
 from game_logic import GameLogic
-from OpenGL.GL import *
+from OpenGL.GL import * # type: ignore
 from PIL import Image
 
 class Textures:
