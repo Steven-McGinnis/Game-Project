@@ -8,14 +8,12 @@
       "kind": "player",
       "position": [0.0, 0.0, 0.0],
       "behaviors": {
-        "KeyMove": [0.1],
+        "KeyMove": [0.09],
         "MouseRotation": [0.1],
         "BlockedByObjects": [],
         "Jump": [0.5, 0.05],
         "Gravity": [0.1],
-        "GainSpeed": [],
-        "IceSlide": [0.1],
-        "Friction": [0.05]
+        "GainSpeed": []
       }
     },
     {
@@ -213,12 +211,19 @@
           [["clicked-key1", "switch1"], ["clicked-switch1"]]
         ]
       }
+    },
+    {
+      "kind": "cube2",
+      "position": [-4.0, 0.0, -3.0],
+      "size": [0.5, 0.5, 0.5],
+      "faces": {"top": {"type": "color", "value": [1.0, 0.0, 0.0, 1.0]}, "back": {"type": "texture", "value": "rock"}, "left": {"type": "texture", "value": "rock"}, "right": {"type": "texture", "value": "rock"}, "front": {"type": "texture", "value": "rock"}, "bottom": {"type": "texture", "value": "rock"}}
     }
   ],
   "files": {
     "unlock": "./sounds//unlock.wav",
     "bgmusic": "./sounds/background_music.mp3",
-    "portal": "./sounds/portal.wav"
+    "portal": "./sounds/portal.wav",
+    "rock": "./textures/rock.jpg"
   },
   "behaviors": {
     "KeyMove": "behavior_key_move",

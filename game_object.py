@@ -2,22 +2,24 @@ from pubsub import pub
 
 
 class GameObject:
-    def __init__(
-        self, kind, id, position, size, texture=None, rotation=None, identifier=None
-    ):
+    def __init__(self, id, data):
         self.properties = {}
-        self.position = position
+
+        self.position = data.get('position')
         self.id = id
-        self.kind = kind
-        self.size = size
-        self.texture = texture
-        self._identifier = identifier
+        self.kind = data.get('kind')
+        self.size = data.get('size')
+        self.texture = data.get('texture')
+        self._identifier = data.get('identifier')
+        self.faces = data.get('faces', {})
+
         self.visible = True
         self.gravity = True
         self.x_rotation = 0
         self.y_rotation = 0
         self.z_rotation = 0
 
+        rotation = data.get('rotation')
         if rotation is not None:
             self.x_rotation, self.y_rotation, self.z_rotation = rotation
 
@@ -29,8 +31,8 @@ class GameObject:
         pub.subscribe(self.inverseGravity, "inverse_gravity")
         pub.subscribe(self.clicked, "clicked-" + str(self.id))
 
-        if identifier:
-            pub.subscribe(self.clicked, "clicked-" + identifier)
+        if self._identifier:
+            pub.subscribe(self.clicked, "clicked-" + self._identifier)
 
     def add_behavior(self, behavior):
         self.behaviors[behavior.__class__.__name__] = behavior

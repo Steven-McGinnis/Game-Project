@@ -4,6 +4,7 @@ from pubsub import pub
 from pygame.locals import *
 from view_cube import CubeView
 from view_sphere import SphereView
+from view_cube2 import CubeViewColor
 from view_billboard_cube import BillboardCubeView
 from localize import _
 from localize import Localize
@@ -209,6 +210,9 @@ class PlayerView:
 
         if game_object.kind == 'world':
             self.view_objects[game_object.id] = WorldView(game_object)
+
+        if game_object.kind == 'cube2':
+            self.view_objects[game_object.id] = CubeViewColor(game_object)
 
     def prepare_3d(self):
         glViewport(0, 0, self.window_width, self.window_height)

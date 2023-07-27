@@ -28,17 +28,13 @@ class GameLogic:
         GameLogic.process_deletions()
 
     @staticmethod
-    def create_object(
-        kind, position, size, texture=None, rotation=None, identifier=None
-    ):
-        obj = GameObject(
-            kind, GameLogic.next_id, position, size, texture, rotation, identifier
-        )
+    def create_object(data):
+        obj = GameObject(GameLogic.next_id, data)
         GameLogic.next_id += 1
         GameLogic.game_objects[obj.id] = obj
 
-        if identifier:
-            GameLogic.identifier_index[identifier] = obj
+        if data ['identifier']:
+            GameLogic.identifier_index[data['identifier']] = obj
 
         pub.sendMessage("create", game_object=obj)
         return obj
@@ -55,30 +51,19 @@ class GameLogic:
                 return False
 
             for game_object in level_data["objects"]:
-                size = [1.0, 1.0, 1.0]
-                texture = None
-                rotation = None
-                identifier = None
-                if "size" in game_object:
-                    size = game_object["size"]
+                if "size" not in game_object:
+                    game_object["size"] = [1.0, 1.0, 1.0]
 
-                if "texture" in game_object:
-                    texture = game_object["texture"]
+                if "texture" not in game_object:
+                    game_object["texture"] = None
 
-                if "rotation" in game_object:
-                    rotation = game_object["rotation"]
+                if "rotation" not in game_object:
+                    game_object["rotation"] = None
 
-                if "identifier" in game_object:
-                    identifier = game_object["identifier"]
+                if "identifier" not in game_object:
+                    game_object["identifier"] = None
 
-                obj = GameLogic.create_object(
-                    game_object["kind"],
-                    game_object["position"],
-                    size,
-                    texture,
-                    rotation,
-                    identifier,
-                )
+                obj = GameLogic.create_object(game_object)
 
                 if "behaviors" not in game_object:
                     continue
