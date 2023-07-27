@@ -1,6 +1,7 @@
 from game_logic import GameLogic
 from player_view import PlayerView
 from localize import Localize
+from sounds import Sounds
 
 
 class Main:
@@ -9,6 +10,8 @@ class Main:
 
         while True:
             GameLogic.tick()
+            Sounds.tick()
+
             for instance in self.instances:
                 instance.tick()
 

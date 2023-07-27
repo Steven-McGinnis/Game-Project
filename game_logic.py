@@ -1,15 +1,5 @@
 from game_object import GameObject
-from behavior_x_rotation import XRotation
-from behavior_y_rotation import YRotation
-from behavior_z_rotation import ZRotation
-from behavior_mouse_rotation import MouseRotation
-from behavior_key_move import KeyMove
-from behavior_collision import BlockedByObjects
-from behavior_jump import Jump
-from behavior_flying import Flying
-from behavior_power_up import PowerUpBob
 from pubsub import pub
-import numpy as np
 import json
 import importlib
 
@@ -18,6 +8,7 @@ class GameLogic:
     properties = {}
     game_objects = {}
     identifier_index = {}
+    files = {}
     deletions = []
 
     next_id = 0
@@ -98,6 +89,14 @@ class GameLogic:
                     instance = class_(*game_object["behaviors"][behavior])
 
                     obj.add_behavior(instance)
+
+                for file in level_data['files']:
+                    GameLogic.files[file] = level_data['files'][file]
+
+                if "level" in level_data:
+                    if 'music' in level_data['level']:
+                        from sounds import Sounds
+                        Sounds.play_music(level_data['level']['music'])
 
     @staticmethod
     def get_property(key, default=None):

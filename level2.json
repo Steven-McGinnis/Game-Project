@@ -1,4 +1,7 @@
 {
+  "level": {
+    "music": "bgmusic"
+  },
   "objects": [
     {
       "kind": "player",
@@ -116,6 +119,11 @@
       }
     }
   ],
+  "files": {
+    "unlock": "./sounds//unlock.wav",
+    "bgmusic": "./sounds/background_music2.mp3",
+    "antigrav": "./sounds/antigrav.wav"
+  },
   "behaviors": {
     "KeyMove": "behavior_key_move",
     "MouseRotation": "behavior_mouse_rotation",

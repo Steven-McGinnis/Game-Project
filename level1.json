@@ -1,4 +1,7 @@
 {
+  "level": {
+    "music": "bgmusic"
+  },
   "objects": [
     {
       "identifier": "player",
@@ -171,7 +174,7 @@
       "size": [0.5, 0.5, 0.5],
       "behaviors": {
         "Switch": ["key1", true, "unlocked", true],
-        "Disappear": ["unlocked", true]
+        "Disappear": ["unlocked", true, "unlock"]
       }
     },
     {
@@ -192,7 +195,7 @@
       "texture": "./textures//door.jpg",
       "behaviors": {
         "Switch": ["key2", true, "unlocked", true],
-        "Disappear": ["unlocked", true]
+        "Disappear": ["unlocked", true, "unlock"]
       }
     },
     {
@@ -212,6 +215,11 @@
       }
     }
   ],
+  "files": {
+    "unlock": "./sounds//unlock.wav",
+    "bgmusic": "./sounds/background_music.mp3",
+    "portal": "./sounds/portal.wav"
+  },
   "behaviors": {
     "KeyMove": "behavior_key_move",
     "MouseRotation": "behavior_mouse_rotation",
