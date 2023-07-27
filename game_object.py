@@ -1,6 +1,5 @@
 from pubsub import pub
 
-
 class GameObject:
     def __init__(self, id, data):
         self.properties = {}
@@ -8,9 +7,9 @@ class GameObject:
         self.position = data.get('position')
         self.id = id
         self.kind = data.get('kind')
-        self.size = data.get('size')
-        self.texture = data.get('texture')
-        self._identifier = data.get('identifier')
+        self.size = data.get('size', [1.0, 1.0, 1.0])
+        self.texture = data.get('texture', None)
+        self._identifier = data.get('identifier', None)
         self.faces = data.get('faces', {})
 
         self._highlight = False
@@ -108,6 +107,9 @@ class GameObject:
         self._size = value
 
     def tick(self):
+        from game_logic import GameLogic
+        if GameLogic.get_property("paused"):
+            return
         self._moved = False
         self._highlight = False
         for behavior in self.behaviors:
@@ -124,10 +126,7 @@ class GameObject:
             self.behaviors[behavior].hover(game_object)
 
     def get_property(self, key, default=None):
-        if key in self.properties:
-            return self.properties[key]
-
-        return default
+        return self.properties.get(key, default)
 
     def set_property(self, key, value):
         self.properties[key] = value

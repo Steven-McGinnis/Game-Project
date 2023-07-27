@@ -125,10 +125,16 @@ class PlayerView:
 
                 if event.key == pygame.K_p:
                     self.paused = not self.paused
+                    GameLogic.set_property("paused", self.paused)
                     pygame.mouse.set_pos(self.viewCenter)
 
                 if event.key == pygame.K_l:
                     Localize.switch_language()
+
+                if event.key == pygame.K_s and pygame.key.get_mods() & pygame.KMOD_CTRL:
+                    Localize.save()
+                    GameLogic.save_world()
+
 
             if not self.paused:
                 if event.type == pygame.MOUSEMOTION:
