@@ -103,6 +103,7 @@ class PlayerView:
     def tick(self):
         global clicks
         mouseMove = (0, 0)
+        clicked = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -110,8 +111,8 @@ class PlayerView:
                 return
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
-                self.handle_click(pos)
+                clicked = True
+
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
@@ -136,6 +137,8 @@ class PlayerView:
 
         # If Not Paused Do This
         if not self.paused:
+            pos = pygame.mouse.get_pos()
+            self.handle_mouse(pos, clicked)
             self.prepare_3d()
 
             keypress = pygame.key.get_pressed()
@@ -227,7 +230,7 @@ class PlayerView:
         glDepthFunc(GL_LESS)
         glEnable(GL_DEPTH_TEST)
 
-    def handle_click(self, pos):
+    def handle_mouse(self, pos, clicked):
         windowX = pos[0]
         windowY = self.window_height - pos[1]
 
@@ -282,12 +285,15 @@ class PlayerView:
             return
 
         if closest:
+            closest.hover(self.player)
+            if clicked:
+                closest.clicked(self.player)
+                self.shoot()
+                if closest.identifier:
+                    self.logger.add_log(_("Object clicked: ") + closest.identifier)
+        
 
-            closest.clicked(self.player)
-        self.shoot()
 
-        if closest.identifier:
-            self.logger.add_log(_("Object clicked: ") + closest.identifier)
 
 
 

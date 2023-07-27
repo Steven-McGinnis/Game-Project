@@ -218,7 +218,8 @@
       "size": [0.5, 0.5, 0.5],
       "faces": {"top": {"type": "movie", "value": "yfa"}, "back": {"type": "movie", "value": "yfa"}, "left": {"type": "movie", "value": "yfa"}, "right": {"type": "movie", "value": "yfa"}, "front": {"type": "movie", "value": "yfa"}, "bottom":{"type": "movie", "value": "yfa"}},
       "behaviors": {
-        "Movie": ["yfa", "goto1", "pausemoon", "stopmoon"]
+        "EnableHighlight" : [],
+        "HighlightColor" : [[0.0, 1.0, 0.0]]
       }
     }
   ],
@@ -250,6 +251,8 @@
     "DeleteOnCollision": "behavior_delete_on_collision",
     "Goto": "behavior_goto",
     "GotoSupervisor": "behavior_goto_sup",
-    "Movie": "behavior_movie"
+    "Movie": "behavior_movie",
+    "EnableHighlight": "behavior_highlight",
+    "HighlightColor": "behavior_highlight"
   }
 }

@@ -8,6 +8,9 @@ from movies import Movies
 
 class CubeViewColor(ViewObject):
     def get_color(self, face):
+        if self.game_object.get_property('highlight_color') and self.game_object.highlight:
+            return self.game_object.get_property('highlight_color')
+        
         if face in self.game_object.faces:
             if self.game_object.faces[face]['type'] == 'color':
                 return self.game_object.faces[face]['value']

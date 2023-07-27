@@ -13,6 +13,7 @@ class GameObject:
         self._identifier = data.get('identifier')
         self.faces = data.get('faces', {})
 
+        self._highlight = False
         self.visible = True
         self.gravity = True
         self.x_rotation = 0
@@ -37,6 +38,10 @@ class GameObject:
     def add_behavior(self, behavior):
         self.behaviors[behavior.__class__.__name__] = behavior
         behavior.connect(self)
+
+    @property
+    def highlight(self):
+        return self._highlight
 
     @property
     def identifier(self):
@@ -104,6 +109,7 @@ class GameObject:
 
     def tick(self):
         self._moved = False
+        self._highlight = False
         for behavior in self.behaviors:
             self.behaviors[behavior].tick()
 
@@ -112,6 +118,10 @@ class GameObject:
     def clicked(self, game_object):
         for behavior in self.behaviors:
             self.behaviors[behavior].clicked(game_object)
+
+    def hover(self, game_object):
+        for behavior in self.behaviors:
+            self.behaviors[behavior].hover(game_object)
 
     def get_property(self, key, default=None):
         if key in self.properties:

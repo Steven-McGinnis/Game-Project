@@ -8,5 +8,8 @@ class Behavior:
     def tick(self):
         pass
 
-    def clicked(self, game_object):
+    def clicked(self, game_object,):
+        pass
+
+    def hover(self, game_object,):
         pass
