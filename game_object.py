@@ -1,14 +1,17 @@
 from pubsub import pub
 
+
 class GameObject:
-    def __init__(self, kind, id, position, size, texture=None, rotation= None, identifier=None):
+    def __init__(
+        self, kind, id, position, size, texture=None, rotation=None, identifier=None
+    ):
         self.properties = {}
         self.position = position
         self.id = id
         self.kind = kind
         self.size = size
         self.texture = texture
-        self.identifier = identifier
+        self._identifier = identifier
         self.visible = True
         self.gravity = True
         self.x_rotation = 0
@@ -18,17 +21,24 @@ class GameObject:
         if rotation is not None:
             self.x_rotation, self.y_rotation, self.z_rotation = rotation
 
-
-        self.behaviors = []
+        self.behaviors = {}
         self.collisions = []
         self._moved = False
         self.collided = False
 
         pub.subscribe(self.inverseGravity, "inverse_gravity")
+        pub.subscribe(self.clicked, "clicked-" + str(self.id))
+
+        if identifier:
+            pub.subscribe(self.clicked, "clicked-" + identifier)
 
     def add_behavior(self, behavior):
-        self.behaviors.append(behavior)
+        self.behaviors[behavior.__class__.__name__] = behavior
         behavior.connect(self)
+
+    @property
+    def identifier(self):
+        return self._identifier
 
     @property
     def moved(self):
@@ -93,13 +103,13 @@ class GameObject:
     def tick(self):
         self._moved = False
         for behavior in self.behaviors:
-            behavior.tick()
+            self.behaviors[behavior].tick()
 
         self.collisions = []
 
     def clicked(self, game_object):
         for behavior in self.behaviors:
-            behavior.clicked(game_object)
+            self.behaviors[behavior].clicked(game_object)
 
     def get_property(self, key, default=None):
         if key in self.properties:

@@ -17,6 +17,7 @@ import importlib
 class GameLogic:
     properties = {}
     game_objects = {}
+    identifier_index = {}
     deletions = []
 
     next_id = 0
@@ -44,6 +45,9 @@ class GameLogic:
         )
         GameLogic.next_id += 1
         GameLogic.game_objects[obj.id] = obj
+
+        if identifier:
+            GameLogic.identifier_index[identifier] = obj
 
         pub.sendMessage("create", game_object=obj)
         return obj
@@ -142,11 +146,26 @@ class GameLogic:
     @staticmethod
     def process_deletions():
         for obj in GameLogic.deletions:
+            if obj.identifier:
+                del GameLogic.identifier_index[obj.identifier]
+
             if obj.id in GameLogic.game_objects:  # Check before deletion
                 del GameLogic.game_objects[obj.id]
                 pub.sendMessage("delete", game_object=obj)
 
         GameLogic.deletions = []
+
+    @staticmethod
+    def get_object(id):
+        result = None
+
+        if id in GameLogic.identifier_index:
+            result = GameLogic.identifier_index[id]
+
+        if id in GameLogic.game_objects:
+            result = GameLogic.game_objects[id]
+
+        return result
 
     @staticmethod
     def order_objects(obj1, obj2):

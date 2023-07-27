@@ -8,7 +8,7 @@ class BlockedByObjects(Behavior):
     def tick(self):
         if self.game_object.collisions:  # type: ignore
             mypos = np.array(self.game_object.position)  # type: ignore
-            
+
             for other in self.game_object.collisions:  # type: ignore
                 otherpos = np.array(other.position)
                 distance = np.linalg.norm(mypos - otherpos)
@@ -35,9 +35,8 @@ class BlockedByObjects(Behavior):
                 thirdpos[0] = mypos[0] if face == 0 else otherpos[0]
                 thirdpos[1] = mypos[1] if face == 1 else otherpos[1]
                 thirdpos[2] = mypos[2] if face == 2 else otherpos[2]
-                
+
                 distance = np.linalg.norm(mypos - thirdpos)
                 direction_vector = (mypos - thirdpos) / distance
 
-
-                self.game_object.position = thirdpos + (distance + velocity) * direction_vector  # type: ignore
+                self.game_object.position = (thirdpos + (distance + velocity) * direction_vector).tolist()  # type: ignore

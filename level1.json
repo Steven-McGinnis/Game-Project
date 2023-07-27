@@ -1,6 +1,7 @@
 {
   "objects": [
     {
+      "identifier": "player",
       "kind": "player",
       "position": [0.0, 0.0, 0.0],
       "behaviors": {
@@ -140,20 +141,35 @@
       "position": [0.0, 0.0, -3],
       "size": [0.5, 0.5, 0.5],
       "texture": "./textures/ammo.jpg",
-      "identifier": "ammo",
+      "identifier": "key1",
       "behaviors": {
-        "YRotation": [0.3],
-        "PowerUpBob": [0.1, 5],
         "Pickup": ["key1", true]
       }
     },
     {
+      "identifier": "switch1",
       "kind": "cube",
       "position": [2.0, 0.0, -3.0],
       "size": [0.5, 0.5, 0.5],
       "behaviors": {
         "Switch": ["key1", true, "unlocked", true],
         "Disappear": ["unlocked", true]
+      }
+    },
+    {
+      "kind": "cube",
+      "position": [20.0, 0.0, -10.0],
+      "size": [0.25, 0.25, 0.25],
+      "texture": "./textures/enemy.jpg",
+      "identifier": "enemy",
+      "behaviors": {
+        "Goto": ["key1", 0.05, 1.0, "goto1"],
+        "BlockedByObjects": [],
+        "Gravity": [0.1],
+        "GotoSupervisor": [
+          "goto1",
+          [["clicked-key1", "switch1"], ["clicked-switch1"]]
+        ]
       }
     }
   ],
@@ -174,6 +190,8 @@
     "Pickup": "behavior_pickup",
     "Switch": "behavior_switch",
     "Disappear": "behavior_disappear",
-    "DeleteOnCollision": "behavior_delete_on_collision"
+    "DeleteOnCollision": "behavior_delete_on_collision",
+    "Goto": "behavior_goto",
+    "GotoSupervisor": "behavior_goto_sup"
   }
 }
