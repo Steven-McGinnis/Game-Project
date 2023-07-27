@@ -185,7 +185,7 @@ class PlayerView:
             self.render_hud()
 
             pygame.display.flip()
-            self.clock.tick(30)
+            self.clock.tick(60)
 
     # Display All Objects in Scene
     def display(self):
@@ -281,10 +281,14 @@ class PlayerView:
             print(_("No closest object found"))
             return
 
-        closest.clicked(self.player)
+        if closest:
+
+            closest.clicked(self.player)
         self.shoot()
 
-        self.logger.add_log(_("Object clicked: ") + str(closest.kind))
+        if closest.identifier:
+            self.logger.add_log(_("Object clicked: ") + closest.identifier)
+
 
 
     def render_hud(self):
