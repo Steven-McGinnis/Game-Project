@@ -12,7 +12,7 @@ class CubeViewColor(ViewObject):
             if self.game_object.faces[face]['type'] == 'color':
                 return self.game_object.faces[face]['value']
             
-        return [0.25, 0.25, 0.25, 1.0]
+        return [0.5, 0.5, 0.5, 1.0]
     
     def get_texture(self, face):
         if face in self.game_object.faces:

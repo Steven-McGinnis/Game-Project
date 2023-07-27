@@ -10,10 +10,7 @@ class Movies:
     @staticmethod
     def get_frame(tag):
         if tag not in Movies.movies:
-            Movies.play_movie(tag)
-            
-            if tag not in Movies.movies:
-                return None
+            return
         
         if Movies.movies[tag]['texture']:
             glBindTexture(GL_TEXTURE_2D, Movies.movies[tag]['texture'])
@@ -73,7 +70,13 @@ class Movies:
             iy = frame.size[0]
             frame = frame.tobytes("raw", "RGB", 0, -1)
 
-            texture_id = glGenTextures(1)
+            
+            if Movies.movies[tag]['texture']:
+                texture_id = Movies.movies[tag]['texture']
+            else:
+                texture_id = glGenTextures(1)
+                Movies.movies[tag]['texture'] = texture_id
+
             glBindTexture(GL_TEXTURE_2D, texture_id)
 
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
@@ -81,7 +84,6 @@ class Movies:
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, ix, iy, 0, GL_RGB, GL_UNSIGNED_BYTE, frame)
-            glEnable(GL_TEXTURE_2D)
 
             Movies.movies[tag]['texture'] = texture_id
 

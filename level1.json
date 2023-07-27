@@ -216,10 +216,14 @@
       "kind": "cube2",
       "position": [-4.0, 0.0, -3.0],
       "size": [0.5, 0.5, 0.5],
-      "faces": {"top": {"type": "movie", "value": "yfa"}, "back": {"type": "movie", "value": "yfa"}, "left": {"type": "movie", "value": "yfa"}, "right": {"type": "movie", "value": "yfa"}, "front": {"type": "movie", "value": "yfa"}, "bottom":{"type": "movie", "value": "yfa"}}
+      "faces": {"top": {"type": "movie", "value": "yfa"}, "back": {"type": "movie", "value": "yfa"}, "left": {"type": "movie", "value": "yfa"}, "right": {"type": "movie", "value": "yfa"}, "front": {"type": "movie", "value": "yfa"}, "bottom":{"type": "movie", "value": "yfa"}},
+      "behaviors": {
+        "Movie": ["yfa", "goto1", "pausemoon", "stopmoon"]
+      }
     }
   ],
   "files": {
+    "enemy": "./textures/enemy.jpg",
     "unlock": "./sounds//unlock.wav",
     "bgmusic": "./sounds/background_music.mp3",
     "portal": "./sounds/portal.wav",
@@ -245,6 +249,7 @@
     "Disappear": "behavior_disappear",
     "DeleteOnCollision": "behavior_delete_on_collision",
     "Goto": "behavior_goto",
-    "GotoSupervisor": "behavior_goto_sup"
+    "GotoSupervisor": "behavior_goto_sup",
+    "Movie": "behavior_movie"
   }
 }
