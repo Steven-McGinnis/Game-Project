@@ -7,7 +7,7 @@ class SpawnPowerUp(Behavior):
     def __init__(self):
         super(SpawnPowerUp, self).__init__()
         pub.subscribe(self.on_enemy_destroyed, "enemy_destroyed")
-        self.test = True
+        self.test = False
 
     def on_enemy_destroyed(self, position):
         if self.test:

@@ -25,7 +25,8 @@ class GameLogic:
     total_enemies = 0
     round_timer = 0
     enemy_speed = 0.01
-    ammo = 20
+    safety_distance = 50
+    disabled_for_editing = False
 
     next_id = 0
 
@@ -41,6 +42,9 @@ class GameLogic:
         for game_object in GameLogic.game_objects.values():
             game_object.tick()
 
+        if GameLogic.disabled_for_editing:
+            return
+        
         if not GameLogic.round_started:
             GameLogic.in_between_round()
         
@@ -218,18 +222,28 @@ class GameLogic:
         return obj2, obj1
 
     
+
     @staticmethod
     def collisionType(obj1, obj2):
         # If either object or identifier is None, do nothing
         if obj1 is None or obj2 is None or not hasattr(obj1, 'identifier') or not hasattr(obj2, 'identifier') or obj1.identifier is None or obj2.identifier is None:
             return
-        
+
         player, other = GameLogic.order_objects(obj1, obj2)
-        if other.identifier.startswith("power_up") or \
-        other.identifier.startswith("portal") or \
-        other.identifier.startswith("inverse") or \
-        other.identifier.startswith("ammo"):
-            pub.sendMessage("collision", obj=other)
+        print("Player:", player.identifier)
+        print("Other:", other.identifier)
+
+        if player.identifier == "player":
+            if other.identifier.startswith("power_up") or \
+            other.identifier.startswith("portal") or \
+            other.identifier.startswith("inverse") or \
+            other.identifier.startswith("ammo"):
+                pub.sendMessage("collision", obj=other)
+            elif other.identifier.startswith("enemy"):
+                pub.sendMessage("take_damage2")
+
+        return
+
 
 
 
@@ -293,6 +307,9 @@ class GameLogic:
             GameLogic.round += 1
             GameLogic.enemies = 5 * GameLogic.round
             GameLogic.game_state = "round"
+            GameLogic.enemy_speed += 0.001
+            if GameLogic.safety_distance > 10:
+                GameLogic.safety_distance -= 5
         # If the Round is in play
         # Spawn Enemies
         # Check for Round End
@@ -317,14 +334,14 @@ class GameLogic:
             
 
     @staticmethod
-    def create_enemy(safety_distance=50):
+    def create_enemy():
         # Get the player's position
         player = GameLogic.get_object("player")
         player_pos = player.position if player else [0, 0, 0]
 
         # Create a random position away from the player
-        random_x = player_pos[0] + random.uniform(-1, 1) * safety_distance
-        random_z = player_pos[2] + random.uniform(-1, 1) * safety_distance
+        random_x = player_pos[0] + random.uniform(-1, 1) * GameLogic.safety_distance
+        random_z = player_pos[2] + random.uniform(-1, 1) * GameLogic.safety_distance
 
         # Keep the generated position within the specified range
         min_x, max_x = -50, 50
@@ -348,7 +365,9 @@ class GameLogic:
             "behaviors": {
                 "Goto": ["player", GameLogic.enemy_speed, 1.0],
                 "Shoot": ["zombieDeath"],
-                "SpawnPowerUp" : []
+                "SpawnPowerUp" : [],
+                "BlockedByObjects": [],
+                "Gravity": [0.1]
             }
         }
 
@@ -399,3 +418,8 @@ class GameLogic:
             powerup.add_behavior(instance)
 
         return powerup
+
+
+    @staticmethod
+    def disable_for_editing():
+        GameLogic.disabled_for_editing = not GameLogic.disabled_for_editing

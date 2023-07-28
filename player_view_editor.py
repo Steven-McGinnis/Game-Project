@@ -39,7 +39,7 @@ class PlayerViewEditor:
 
         # Pause the Game
         GameLogic.set_property("paused", True)
-
+        GameLogic.disable_for_editing()
         # Set the Camera Direction
         self.camera_direction = [0.0, 0.0, -1.0]
 

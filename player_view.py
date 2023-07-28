@@ -31,6 +31,8 @@ class PlayerView:
         self.create_hud_variables()
         self.last_ammo_update = 0  # initialize the last update time to 0
         self.cooldown_period = 1  # cooldown period in seconds (set as needed)
+        self.last_health_update = 0  # initialize the last update time to 0
+        self.health_cooldown_period = 1  # cooldown period in seconds (set as needed)
 
     def subscribe_to_events(self):
         pub.subscribe(self.new_game_object, "create")
@@ -38,6 +40,7 @@ class PlayerView:
         pub.subscribe(self.addAmmo, "ammo")
         pub.subscribe(self.deleteAll, "delete_all")
         pub.subscribe(self.display_round_wait_timer, "round_wait")
+        pub.subscribe(self.take_damage, "take_damage2")
     
     # Clears out all the View Objects for the Level
     def deleteAll(self):
@@ -83,8 +86,8 @@ class PlayerView:
     def setup(self):
         pygame.init()
 
-        self.window_width = 1920
-        self.window_height = 1080
+        self.window_width = 1024    
+        self.window_height = 768
         self.viewCenter = (self.window_width // 2, self.window_height // 2)
 
         pygame.display.set_mode(
@@ -100,7 +103,10 @@ class PlayerView:
         self.viewMatrix = glGetFloatv(GL_MODELVIEW_MATRIX)
 
     def tick(self):
-        global clicks
+        if self.health <= 0:
+            pygame.quit()
+            GameLogic.set_property("quit", True)
+            return
         mouseMove = (0, 0)
         clicked = False
         for event in pygame.event.get():
@@ -405,9 +411,12 @@ class PlayerView:
 
             y -= 20  # Move up for the next entry
 
-    def take_damage(self, amount):
-        self.health -= amount
-        self.update_health_stamina_textures()
+    def take_damage(self):
+        current_time = time.time()
+        if current_time - self.last_health_update >= self.health_cooldown_period:
+            self.health -= 25
+            self.update_health_stamina_textures()
+            self.last_health_update = current_time
 
     def heal(self, amount):
         self.health += amount
@@ -434,6 +443,7 @@ class PlayerView:
             return
 
         self.ammo += 10
+        Sounds.play_sound("reload")
         self.update_health_stamina_textures()
         self.last_ammo_update = current_time
 

@@ -3,6 +3,8 @@ from player_view import PlayerView
 from localize import Localize
 from sounds import Sounds
 from movies import Movies
+from end_screen import EndScreen
+from start_screen import StartScreen 
 
 
 class Main:
@@ -20,6 +22,9 @@ class Main:
             if GameLogic.get_property("quit"):
                 break
 
+        end_screen = EndScreen()  # create an EndScreen instance after the main game loop
+        end_screen.display()  # display the end screen
+
     def __init__(self):
         self.instances = []
 
@@ -31,6 +36,9 @@ class Main:
 
 
 if __name__ == "__main__":
+
+    start_screen = StartScreen()
+    start_screen.display()
     main = Main()
     
     main.go()

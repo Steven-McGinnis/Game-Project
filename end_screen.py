@@ -1,9 +1,9 @@
-# start_screen.py
+# end_screen.py
 import pygame
 import sys
 from localize import _
 
-class StartScreen:
+class EndScreen:
     def __init__(self):
         pygame.init()
         self.width, self.height = 800, 600
@@ -18,15 +18,12 @@ class StartScreen:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:
-                        return
 
             self.screen.fill((0,0,0))
-            title_text = self.font_big.render(_('Zombie Survival'), True, (255, 255, 255))
-            self.screen.blit(title_text, (self.width/2 - title_text.get_width() // 2, self.height/3 - title_text.get_height() // 2))
-            start_text = self.font_small.render(_('Press Enter to start'), True, (255, 255, 255))
-            self.screen.blit(start_text, (self.width/2 - start_text.get_width() // 2, self.height/2 - start_text.get_height() // 2))
+            game_over_text = self.font_big.render(_('Game Over'), True, (255, 255, 255))
+            self.screen.blit(game_over_text, (self.width/2 - game_over_text.get_width() // 2, self.height/3 - game_over_text.get_height() // 2))
+            thanks_text = self.font_small.render(_('Thank you for playing'), True, (255, 255, 255))
+            self.screen.blit(thanks_text, (self.width/2 - thanks_text.get_width() // 2, self.height/2 - thanks_text.get_height() // 2))
 
             pygame.display.flip()
             self.clock.tick(30)
