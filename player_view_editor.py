@@ -17,22 +17,43 @@ from logger import Logger
 
 class PlayerViewEditor:
     def __init__(self):
+        # Variables
+        # Initialize the Player
         self.player = None
+        # Set Paused to False
         self.paused = False
+        # Setup the Window
         self.setup()
+        # Set the Distance for the Editor Cube Placement
         self.distance = 1.5
+        # Set the Logger
         self.logger = Logger()
+        # Set the Clock
         self.clock = pygame.time.Clock()
+        # Set the Edit Mode to False
         self.edit_mode = False
 
+        # Pause the Game
         GameLogic.set_property("paused", True)
 
+        # Set the Camera Direction
         self.camera_direction = [0.0, 0.0, -1.0]
         
+        # Create Dictionary to hold all rendered objects.
         self.view_objects = {}
         
+        # Create a list to hold all the textures
+        self.textures = []
+        # Set the current texture to 0
+        self.current_texture = 0
+
+        # Subscribe to Events
         self.subscribe_to_events()
-        self.create_hud_variables()
+
+        # Create the HUD Variables
+        self.hud = False
+        if self.hud:
+            self.create_hud_variables()
 
     def subscribe_to_events(self):
         pub.subscribe(self.new_game_object, "create")
@@ -174,8 +195,9 @@ class PlayerViewEditor:
             if keypress[pygame.K_d]:
                 pub.sendMessage("key-d")
 
-            if keypress[pygame.K_LSHIFT]:
-                self.use_stamina(1)
+            if self.hud:
+                if keypress[pygame.K_LSHIFT]:
+                    self.use_stamina(1)
 
             pub.sendMessage("rotate-y", amount=mouseMove[0])
             pub.sendMessage("rotate-x", amount=mouseMove[1])
@@ -197,8 +219,9 @@ class PlayerViewEditor:
                 camera_direction[2] *= -1
                 self.camera_direction = camera_direction
 
-            if keypress[pygame.K_LSHIFT] == False and self.stamina < 100:
-                self.recover_stamina(1)
+            if self.hud:
+                if keypress[pygame.K_LSHIFT] == False and self.stamina < 100:
+                    self.recover_stamina(1)
 
 
             self.enable_lighting()
@@ -402,7 +425,8 @@ class PlayerViewEditor:
 
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
-        self.render_health_stamina()  # Call the new function here
+        if self.hud:
+            self.render_health_stamina()  # Call the new function here
 
         self.render_log()
 
