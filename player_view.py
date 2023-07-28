@@ -281,10 +281,18 @@ class PlayerView:
         if closest:
             closest.hover(self.player)
             if clicked:
-                closest.clicked(self.player)
-                if closest.identifier:
-                    self.logger.add_log(_("Object clicked: ") + closest.identifier)
-        
+                if closest.identifier and closest.identifier.startswith("enemy"):
+                    if self.ammo <= 0:
+                        self.logger.add_log(_("No Ammo!"))
+                    else:
+                        closest.clicked(self.player)
+                        if closest.identifier:
+                            self.logger.add_log(_("Enemy Hit: ") + closest.identifier)
+                elif closest.identifier:
+                    closest.clicked(self.player)
+                    if closest.identifier:
+                        self.logger.add_log(_("Object clicked: ") + closest.identifier)
+
 
 
 

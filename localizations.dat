@@ -2,8 +2,10 @@
     "en": {
         "Ammo: ": "Ammo: ",
         "Clicks:": "Clicks:",
+        "Enemy Hit: ": "Enemy Hit: ",
         "Health:": "Health:",
         "Health: ": "Health: ",
+        "No Ammo!": "No Ammo!",
         "Object clicked:": "Object clicked:",
         "Object clicked: ": "Object clicked: ",
         "Scores:": "Scores:",
