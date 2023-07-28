@@ -32,6 +32,8 @@ class PlayerViewEditor:
         self.clock = pygame.time.Clock()
         # Set the Edit Mode to False
         self.edit_mode = False
+        self.position_mode = False
+        self.size_mode = False
 
         # Pause the Game
         GameLogic.set_property("paused", True)
@@ -146,6 +148,9 @@ class PlayerViewEditor:
         self.apply_texture = False
         self.clear_texture = False
 
+        self.position_adjust = 0.0
+        self.size_adjust = 0.0
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -187,6 +192,12 @@ class PlayerViewEditor:
                 if event.key == pygame.K_z:
                     self.clear_texture = True
 
+                if event.key == pygame.K_f:
+                    self.position_mode = not self.position_mode
+
+                if event.key == pygame.K_c:
+                    self.size_mode = not self.size_mode
+
 
             if not self.paused:
                 if event.type == pygame.MOUSEMOTION:
@@ -194,7 +205,14 @@ class PlayerViewEditor:
                 pygame.mouse.set_pos(self.viewCenter)
 
                 if event.type == pygame.MOUSEWHEEL:
-                    self.distance = max(1.5, self.distance+event.y)
+                    if self.edit_mode:
+                        self.distance = max(1.5, self.distance+event.y)
+
+                    if self.position_mode:
+                        self.position_adjust = event.y * 0.1
+
+                    if self.size_mode:
+                        self.size_adjust = event.y * 0.1
 
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     clicked = True
@@ -439,6 +457,24 @@ class PlayerViewEditor:
             if self.clear_texture:
                 for face in self.get_faces(closest):
                     del closest.faces[face]
+
+            if self.position_mode and self.position_adjust:
+                for face in self.get_faces(closest):
+                    if face == 'front':
+                        closest.position[2] += self.position_adjust
+                    if face == 'back':
+                        closest.position[2] -= self.position_adjust
+                    if face == 'left':
+                        closest.position[0] += self.position_adjust
+                    if face == 'right':
+                        closest.position[0] -= self.position_adjust
+                    if face == 'top':
+                        closest.position[1] -= self.position_adjust
+                    if face == 'bottom':
+                        closest.position[1] += self.position_adjust
+
+            if self.size_mode and self.size_adjust:
+                pass
 
             if clicked:
                 closest.clicked(self.player)
