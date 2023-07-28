@@ -1,5 +1,7 @@
-import pygame
+import sys
 import os
+import subprocess
+import pygame
 
 class StartScreen:
     def __init__(self):
@@ -35,4 +37,10 @@ if __name__ == "__main__":
     start_screen = StartScreen()
     start_screen.tick()
     pygame.quit()
-    os.system('python main.py')
+
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        # It's running as an executable
+        subprocess.call('main.exe')
+    else:
+        # It's running as a Python script
+        os.system('python main.py')

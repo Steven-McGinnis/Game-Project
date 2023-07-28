@@ -14,6 +14,7 @@ from game_logic import GameLogic
 from view_world import WorldView
 from logger import Logger
 import time
+from sounds import Sounds
 
 
 class PlayerView:
@@ -110,6 +111,7 @@ class PlayerView:
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 clicked = True
+                self.shoot()
 
 
             if event.type == pygame.KEYDOWN:
@@ -280,7 +282,6 @@ class PlayerView:
             closest.hover(self.player)
             if clicked:
                 closest.clicked(self.player)
-                self.shoot()
                 if closest.identifier:
                     self.logger.add_log(_("Object clicked: ") + closest.identifier)
         
@@ -430,8 +431,11 @@ class PlayerView:
 
     def shoot(self):
         if self.ammo > 0:
+            Sounds.play_sound("shoot")
             self.ammo -= 1
             self.update_health_stamina_textures()
+        else:
+            Sounds.play_sound("empty")
 
     def display_round_wait_timer(self, timer, game_state):
         if game_state == "round_wait":

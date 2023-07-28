@@ -41,7 +41,9 @@
         "woodfloor": "./textures/woodfloor.jpg",
         "bars": "./textures/bars.jpg",
         "zombie": "./textures/zombie.png",
-        "zombieDeath": "./sounds/zombiedeath.wav"
+        "zombieDeath": "./sounds/zombiedeath.wav",
+        "shoot": "./sounds/shoot.wav",
+        "empty": "./sounds/empty.wav"
     },
     "level": {
         "music": "bgmusic"
