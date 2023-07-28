@@ -177,6 +177,7 @@ class PlayerViewEditor:
 
                 if event.key == pygame.K_t:
                     self.current_texture = (self.current_texture + 1) % len(self.textures)
+                    self.logger.add_log(_("Texture: ") + self.textures[self.current_texture])
 
                 if event.key == pygame.K_r:
                     self.apply_texture = True
@@ -427,8 +428,8 @@ class PlayerViewEditor:
             closest.hover(self.player)
             
             if self.apply_texture:
-                
-                closest.faces["front"] = {'type': 'texture', 'value': self.textures[self.current_texture]}
+                for face in self.get_faces(closest):
+                    closest.faces[face] = {'type': 'texture', 'value': self.textures[self.current_texture]}
 
 
             if clicked:
@@ -438,6 +439,38 @@ class PlayerViewEditor:
                 if closest.identifier:
                     self.logger.add_log(_("Object clicked: ") + closest.identifier)
         
+
+    def get_faces(self, game_object):
+        mypos = numpy.array(self.player.position) # type: ignore
+        otherpos = numpy.array(game_object.position)
+        distance = numpy.linalg.norm(mypos - otherpos)
+        direction_vector = (mypos - otherpos) / distance
+
+        max_direaction = max(direction_vector, key=abs)
+        indices = [i for i, j in enumerate(direction_vector) if j == max_direaction]
+
+        results = []
+
+        for index in indices:
+            if index == 0 and direction_vector[index] < 0:
+                results.append("left")
+
+            if index == 0 and direction_vector[index] > 0:
+                results.append("right")
+
+            if index == 1 and direction_vector[index] < 0:
+                results.append("bottom")
+
+            if index == 1 and direction_vector[index] > 0:
+                results.append("top")
+
+            if index == 2 and direction_vector[index] < 0:
+                results.append("front")
+            
+            if index == 2 and direction_vector[index] > 0:
+                results.append("back")
+            
+        return results
 
 
 
@@ -519,9 +552,9 @@ class PlayerViewEditor:
         # Display the click log
         y = self.window_height  # Adjust this as needed
         for log_entry in self.logger.get_log():
-            img = pygame.font.SysFont("Arial", 20).render(
-                log_entry, True, (128, 128, 128)
-            )  # Use gray color
+            img = pygame.font.SysFont("Arial", 30).render(
+                log_entry, True, (255, 255, 255)  # Use white color
+            )
             w, h = img.get_size()
             data = pygame.image.tostring(img, "RGBA", 1)  # type: ignore
             texture = glGenTextures(1)
@@ -539,20 +572,22 @@ class PlayerViewEditor:
             glBegin(GL_QUADS)
             glColor4f(1.0, 1.0, 1.0, 1.0)  # White color to keep texture color
             glTexCoord2f(0.0, 1.0)
-            glVertex2f(self.window_width - 100, y)  # Reduce width here
+            glVertex2f(self.window_width - 200, y)  # Move 50 pixels to the left
             glTexCoord2f(1.0, 1.0)
-            glVertex2f(self.window_width, y)
+            glVertex2f(self.window_width - 50, y)  # Move 50 pixels to the left
             glTexCoord2f(1.0, 0.0)
-            glVertex2f(self.window_width, y - 20)
+            glVertex2f(self.window_width - 50, y - 30)
             glTexCoord2f(0.0, 0.0)
-            glVertex2f(self.window_width - 100, y - 20)  # And here
+            glVertex2f(self.window_width - 200, y - 30)
             glEnd()
 
             glDeleteTextures([texture])  # Delete the texture after using it
             glDisable(GL_TEXTURE_2D)
             glDisable(GL_BLEND)
 
-            y -= 20  # Move up for the next entry
+            y -= 30  # Move up for the next entry
+
+
 
     def take_damage(self, amount):
         self.health -= amount

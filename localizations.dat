@@ -8,7 +8,8 @@
         "Object clicked: ": "Object clicked: ",
         "Scores:": "Scores:",
         "Stamina:": "Stamina:",
-        "Stamina: ": "Stamina: "
+        "Stamina: ": "Stamina: ",
+        "Texture: ": "Texture: "
     },
     "es": {
         "Clicks:": "Clics:",
