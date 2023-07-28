@@ -12,7 +12,7 @@ class Gravity(Behavior):
         self.speed = speed
         self.old_y = 0.0
 
-    @profile
+    
     def tick(self):
         if self.game_object.gravity == False:  # type: ignore
             # If gravity is set to False, simulate anti-gravity by moving the object upwards

@@ -33,6 +33,7 @@ class PlayerView:
         pub.subscribe(self.delete_game_object, "delete")
         pub.subscribe(self.addAmmo, "ammo")
         pub.subscribe(self.deleteAll, "delete_all")
+        pub.subscribe(self.display_round_wait_timer, "round_wait")
     
     # Clears out all the View Objects for the Level
     def deleteAll(self):
@@ -308,6 +309,7 @@ class PlayerView:
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
         self.render_health_stamina()  # Call the new function here
+        self.display_round_wait_timer(GameLogic.round_timer, GameLogic.game_state)
 
         self.render_log()
 
@@ -437,3 +439,55 @@ class PlayerView:
         if self.ammo > 0:
             self.ammo -= 1
             self.update_health_stamina_textures()
+
+    def display_round_wait_timer(self, timer, game_state):
+        if game_state == "round_wait":
+            mode = "Round Begins in {:.2f} seconds".format(timer)
+
+        elif game_state == "round_end":
+            mode = "Round " + str(timer) + " Complete!"
+
+        else:
+            mode = "Survive the Round!"
+
+
+
+        y = self.window_height - 30  # Adjust the starting position
+
+        img = pygame.font.SysFont("Arial", 40).render(
+            mode, True, (255, 0, 0)  # Use white color
+        )
+        w, h = img.get_size()
+
+        # Center the text
+        x = (self.window_width - w) // 2
+
+        img = pygame.transform.flip(img, False, True)  # Flip the image
+        data = pygame.image.tostring(img, "RGBA", 1)  # type: ignore
+        texture = glGenTextures(1)
+        glBindTexture(GL_TEXTURE_2D, texture)
+        glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        glTexImage2D(
+            GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data
+        )
+
+        glEnable(GL_TEXTURE_2D)
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+        glBegin(GL_QUADS)
+        glColor4f(1.0, 1.0, 1.0, 1.0)  # White color to keep texture color
+        glTexCoord2f(0.0, 0.0)
+        glVertex2f(x, y)
+        glTexCoord2f(1.0, 0.0)
+        glVertex2f(x + w, y)
+        glTexCoord2f(1.0, 1.0)
+        glVertex2f(x + w, y - h)
+        glTexCoord2f(0.0, 1.0)
+        glVertex2f(x, y - h)
+        glEnd()
+
+        glDeleteTextures([texture])  # Delete the texture after using it
+        glDisable(GL_TEXTURE_2D)
+        glDisable(GL_BLEND)

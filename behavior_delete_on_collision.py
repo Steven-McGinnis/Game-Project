@@ -16,7 +16,7 @@ class DeleteOnCollision(Behavior):
         with open("collision.json", "r") as f:
             self.identifier_to_message = json.load(f)
 
-    @Profile
+    
     def collided(self, obj):
         # check if the object has been collided with before
         if obj.collided:

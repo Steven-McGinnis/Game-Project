@@ -20,8 +20,7 @@
         "Switch": "behavior_switch",
         "XRotation": "behavior_x_rotation",
         "YRotation": "behavior_y_rotation",
-        "ZRotation": "behavior_z_rotation",
-        "Shoot": "behavior_shoot"
+        "ZRotation": "behavior_z_rotation"
     },
     "files": {
         "bgmusic": "./sounds/background_music.mp3",
@@ -39,8 +38,7 @@
         "switch": "./textures/switch.png",
         "woodfloor": "./textures/woodfloor.jpg",
         "bars": "./textures/bars.jpg",
-        "zombie": "./textures/zombie.png",
-        "zombieDeath": "./sounds/zombiedeath.wav"
+        "zombie": "./textures/zombie.png"
     },
     "level": {
         "music": "bgmusic"
@@ -63,8 +61,13 @@
         {"kind": "cube", "position": [0.0, 0.75, -10.0], "size": [10.0, 0.01, 10], "texture": "./textures/woodfloor.jpg", "behaviors": {}},
         {"kind": "cube", "position": [0.0, 3.0, -7], "size": [10.0, 0.01, 6.5], "texture": "./textures/brick.jpg", "rotation": [20.0, 0.0, 0.0], "behaviors": {}},
         {"kind": "cube", "position": [0.0, 3.0, -13], "size": [10.0, 0.01, 6.5], "texture": "./textures/brick.jpg", "rotation": [-20.0, 0.0, 0.0], "behaviors": {}},
+        {"kind": "cube", "position": [0.0, 0.0, -3], "size": [0.5, 0.5, 0.5], "identifier": "key1", "texture": "./textures/ammo.jpg", "behaviors": {"Pickup": ["key1", true]}},
+        {"kind": "cube", "position": [2.0, 0.0, -3.0], "size": [0.5, 0.5, 0.5], "identifier": "switch1", "behaviors": {"Disappear": ["unlocked", true, "unlock"], "Switch": ["key1", true, "unlocked", true]}},
         {"kind": "cube", "position": [2.0, 1.1, -8.0], "size": [0.5, 0.5, 0.5], "identifier": "key2", "texture": "./textures/switch.png", "behaviors": {"Pickup": ["key2", true]}},
         {"kind": "cube", "position": [-5.0, 0.10000000000000003, -8.0], "size": [2.7755575615628914e-17, 1.2999999999999998, 2.1], "identifier": "switch2", "texture": "./textures//door.jpg", "behaviors": {"Disappear": ["unlocked", true, "unlock"], "Switch": ["key2", true, "unlocked", true]}},
+        {"kind": "cube", "position": [20.0, 0.0, -10.0], "size": [0.25, 0.25, 0.25], "identifier": "enemy", "texture": "./textures/enemy.jpg", "behaviors": {"BlockedByObjects": [], "Goto": ["key1", 0.05, 1.0, "goto1"], "GotoSupervisor": ["goto1", [["clicked-key1", "switch1"], ["clicked-switch1"]]], "Gravity": [0.1]}},
+        {"kind": "cube2", "position": [-4.0, 0.0, -3.0], "size": [0.5, 0.5, 0.5], "faces": {"back": {"type": "movie", "value": "yfa"}, "bottom": {"type": "movie", "value": "yfa"}, "front": {"type": "movie", "value": "yfa"}, "left": {"type": "movie", "value": "yfa"}, "right": {"type": "movie", "value": "yfa"}, "top": {"type": "movie", "value": "yfa"}}, "behaviors": {"EnableHighlight": [], "HighlightColor": [[0.0, 1.0, 0.0]]}},
+        {"kind": "cube2", "position": [1, 0, 4], "size": [1.0, 1.0, 1.0], "faces": {"back": {"type": "texture", "value": "rock"}, "front": {"type": "texture", "value": "rock"}, "left": {"type": "texture", "value": "rock"}, "right": {"type": "texture", "value": "rock"}}, "identifier": "bigBoi", "behaviors": {}},
         {"kind": "cube2", "position": [5.400000000000002, 0.1, -7.6999999999999975], "size": [0.5, 0.5, 0.5], "faces": {"left": {"type": "texture", "value": "plank"}, "right": {"type": "texture", "value": "plank"}, "front": {"type": "texture", "value": "plank"}, "back": {"type": "texture", "value": "plank"}, "top": {"type": "texture", "value": "plank"}}, "behaviors": {}},
         {"kind": "cube2", "position": [5.900000000000004, -0.30000000000000004, -7.6999999999999975], "size": [0.5, 0.5, 0.5], "faces": {"back": {"type": "texture", "value": "plank"}, "front": {"type": "texture", "value": "plank"}, "left": {"type": "texture", "value": "plank"}, "right": {"type": "texture", "value": "plank"}, "top": {"type": "texture", "value": "plank"}}, "behaviors": {}}
     ]

@@ -3,6 +3,8 @@ from pubsub import pub
 import json
 import importlib
 from memory_profiler import profile
+import time
+import random
 
 
 class GameLogic:
@@ -13,8 +15,16 @@ class GameLogic:
     deletions = []
     level_data = {}
     filename = None
+    game_state = "None"
+    round_timer_start = None
+    round_started = False
+    round_wait = False
+    spawned = False
     round = 0
     enemies = 20
+    total_enemies = 0
+    round_timer = 0
+    enemy_speed = 0.01
 
     next_id = 0
 
@@ -29,6 +39,12 @@ class GameLogic:
 
         for game_object in GameLogic.game_objects.values():
             game_object.tick()
+
+        if not GameLogic.round_started:
+            GameLogic.in_between_round()
+        
+        if GameLogic.round_started:
+            GameLogic.game_round()
 
         GameLogic.process_deletions()
 
@@ -77,6 +93,7 @@ class GameLogic:
                 if "level" in level_data:
                     if "music" in level_data["level"]:
                         from sounds import Sounds
+                        Sounds.play_music(level_data["level"]["music"])
 
                         
 
@@ -135,7 +152,7 @@ class GameLogic:
     def set_property(key, value):
         GameLogic.properties[key] = value
 
-    @profile
+    
     @staticmethod
     def collide(object1, object2):
         if object1 == object2:
@@ -199,7 +216,7 @@ class GameLogic:
             return obj1, obj2
         return obj2, obj1
 
-    @profile
+    
     @staticmethod
     def collisionType(obj1, obj2):
         player, other = GameLogic.order_objects(obj1, obj2)
@@ -238,3 +255,103 @@ class GameLogic:
             result = result.replace(old, new)
 
         return result
+
+    @staticmethod
+    def in_between_round():
+        if not GameLogic.round_started:
+            # If You Havnt Waited for the Round yet
+            if GameLogic.round_timer == 0 and not GameLogic.round_wait:
+                GameLogic.round_timer = 5
+                GameLogic.round_timer_start = time.time()
+                GameLogic.game_state = "round_wait"
+                GameLogic.round_wait = True
+            
+            # If You Have Waited for the Round and the timer has reached Zero Start the Round
+            elif GameLogic.round_timer <= 0 and GameLogic.round_wait:
+                GameLogic.round_started = True
+                GameLogic.game_state = "round_start"
+
+            # If You Have Waited for the Round and the timer has not reached Zero Continue to Wait
+            elif GameLogic.round_timer_start is not None:
+                elapsed_time = time.time() - GameLogic.round_timer_start
+                GameLogic.round_timer = max(0, GameLogic.round_timer - elapsed_time)
+                GameLogic.round_timer_start = time.time()
+
+    @staticmethod
+    def game_round():
+        # If the Round has just started
+        # Create the variable for the next round
+        if GameLogic.game_state == "round_start":
+            GameLogic.round += 1
+            GameLogic.enemies = 5 * GameLogic.round
+            GameLogic.game_state = "round"
+        # If the Round is in play
+        # Spawn Enemies
+        # Check for Round End
+        elif GameLogic.game_state == "round":
+            # Spawn Enemies
+            if not GameLogic.spawned:
+                for _ in range(GameLogic.enemies):
+                    GameLogic.create_enemy()
+                    GameLogic.total_enemies += 1
+                GameLogic.spawned = True
+            
+            # Check for Round End
+            if GameLogic.total_enemies == 0:
+                GameLogic.round_started = False
+                GameLogic.round_wait = False
+                GameLogic.spawned = False
+                GameLogic.round_timer = 0
+                GameLogic.game_state = "round_end"
+
+            
+
+            
+
+    @staticmethod
+    def create_enemy(safety_distance=50):
+        # Get the player's position
+        player = GameLogic.get_object("player")
+        player_pos = player.position if player else [0, 0, 0]
+
+        # Create a random position away from the player
+        random_x = player_pos[0] + random.uniform(-1, 1) * safety_distance
+        random_z = player_pos[2] + random.uniform(-1, 1) * safety_distance
+
+        # Keep the generated position within the specified range
+        min_x, max_x = -50, 50
+        min_z, max_z = -50, 50
+        random_x = max(min_x, min(max_x, random_x))
+        random_z = max(min_z, min(max_z, random_z))
+
+        position = [random_x, 0.0, random_z]
+
+        # Define the enemy data
+        enemy_data = {
+            "kind": "cube2",
+            "position": position,
+            "identifier": "enemy",
+            "faces": {
+                "front": {"type": "texture", "value": "zombie"},
+                "back": {"type": "texture", "value": "zombie"},
+                "left": {"type": "texture", "value": "zombie"},
+                "right": {"type": "texture", "value": "zombie"},
+            },
+            "behaviors": {
+                "Goto": ["player", GameLogic.enemy_speed, 1.0],
+                "Shoot": ["unlock"]
+            }
+        }
+
+        # Create the enemy using create_object function
+        enemy = GameLogic.create_object(enemy_data)
+        
+        # add behaviors to enemy object as in load_world
+        for behavior in enemy_data["behaviors"]:
+            module = importlib.import_module(GameLogic.level_data["behaviors"][behavior])
+            class_ = getattr(module, behavior)
+            instance = class_(*enemy_data["behaviors"][behavior])
+            instance.arguments = enemy_data["behaviors"][behavior]
+            enemy.add_behavior(instance)
+            
+        return enemy
