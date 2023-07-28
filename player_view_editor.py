@@ -35,6 +35,7 @@ class PlayerViewEditor:
         self.edit_mode = False
         self.position_mode = False
         self.size_mode = False
+        self.get_identifier = False
 
         # Pause the Game
         GameLogic.set_property("paused", True)
@@ -147,11 +148,14 @@ class PlayerViewEditor:
 
         self.apply_texture = False
         self.clear_texture = False
-        self.set_name = False
-        self.get_name = False
+        self.set_identifier = False
 
         self.position_adjust = 0.0
         self.size_adjust = 0.0
+
+        if self.get_identifier:
+            self.update_hud_texture()
+        self.get_identifier = False
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -168,7 +172,7 @@ class PlayerViewEditor:
                 if self.input_mode:
                     if event.key == pygame.K_RETURN:
                         self.input_mode = False
-                        self.set_name = True
+                        self.set_identifier = True
                     elif event.key == pygame.K_BACKSPACE:
                         self.input = self.input[:-1]
 
@@ -180,9 +184,9 @@ class PlayerViewEditor:
                 if not self.input_mode:
                     if event.key == pygame.K_n:
                         self.input_mode = True
-                        self.get_name = True
+                        self.get_identifier = True
                         self.input = ""
-                        self.update_hud_texture()
+
                     if event.key == pygame.K_SPACE:
                         pub.sendMessage("key-jump")
 
@@ -290,7 +294,7 @@ class PlayerViewEditor:
                 self.camera_direction = camera_direction
 
             if self.hud:
-                if keypress[pygame.K_LSHIFT] == False and self.stamina < 100:
+                if keypress[pygame.K_LSHIFT] == False and self.stamina < 100:  # type: ignore
                     self.recover_stamina(1)
 
             self.enable_lighting()
@@ -495,12 +499,11 @@ class PlayerViewEditor:
         if closest:
             closest.hover(self.player)
 
-            if self.set_name:
+            if self.set_identifier:
                 closest._identifier = self.input
 
-            if self.get_name:
+            if self.get_identifier:
                 self.input = closest.identifier
-                self.update_hud_texture()
 
             if self.apply_texture:
                 for face in self.get_faces(closest):
