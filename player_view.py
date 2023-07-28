@@ -104,6 +104,8 @@ class PlayerView:
 
     def tick(self):
         if self.health <= 0:
+            Sounds.play_sound("death")
+            pygame.time.delay(1000)  # delay for 5000 ms = 5 seconds
             pygame.quit()
             GameLogic.set_property("quit", True)
             return
@@ -414,6 +416,7 @@ class PlayerView:
     def take_damage(self):
         current_time = time.time()
         if current_time - self.last_health_update >= self.health_cooldown_period:
+            Sounds.play_sound("damage")
             self.health -= 25
             self.update_health_stamina_textures()
             self.last_health_update = current_time

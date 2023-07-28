@@ -22,15 +22,14 @@ class Main:
             if GameLogic.get_property("quit"):
                 break
 
-        end_screen = EndScreen()  # create an EndScreen instance after the main game loop
-        end_screen.display()  # display the end screen
+        end_screen = EndScreen()
+        end_screen.display()
 
     def __init__(self):
         self.instances = []
 
         Localize.load()
 
-        # create instances
         self.instances.append(GameLogic)
         self.instances.append(PlayerView())
 

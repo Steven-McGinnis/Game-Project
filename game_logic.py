@@ -5,6 +5,7 @@ import importlib
 from memory_profiler import profile
 import time
 import random
+import pygame
 
 
 class GameLogic:
@@ -230,8 +231,6 @@ class GameLogic:
             return
 
         player, other = GameLogic.order_objects(obj1, obj2)
-        print("Player:", player.identifier)
-        print("Other:", other.identifier)
 
         if player.identifier == "player":
             if other.identifier.startswith("power_up") or \
@@ -423,3 +422,8 @@ class GameLogic:
     @staticmethod
     def disable_for_editing():
         GameLogic.disabled_for_editing = not GameLogic.disabled_for_editing
+
+    @staticmethod
+    def quit_game():
+        pygame.quit()
+        GameLogic.set_property("quit", True)

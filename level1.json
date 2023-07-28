@@ -47,7 +47,9 @@
         "reload": "./sounds/reload.wav",
         "building": "./textures/building.jpg",
         "building2": "./textures/building2.jpg",
-        "building3": "./textures/building3.jpg"
+        "building3": "./textures/building3.jpg",
+        "damage": "./sounds/damage.wav",
+        "death": ".//sounds//death.wav"
     },
     "level": {
         "music": "bgmusic"

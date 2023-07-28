@@ -123,7 +123,30 @@
   "files": {
     "unlock": "./sounds//unlock.wav",
     "bgmusic": "./sounds/background_music2.mp3",
-    "antigrav": "./sounds/antigrav.wav"
+    "antigrav": "./sounds/antigrav.wav",
+    "enemy": "./textures/enemy.jpg",
+    "portal": "./sounds/portal.wav",
+    "rock": "./textures/rock.jpg",
+    "yfa": "./videos/yfa.mp4",
+    "ammo": "./textures/ammo.jpg",
+    "brick": "./textures/brick.jpg",
+    "door": "./textures/door.jpg",
+    "grassSeamless": "./textures/grassSeamless.png",
+    "outerwall": "./textures/outerwall.jpg",
+    "plank": "./textures/plank.jpg",
+    "switch": "./textures/switch.png",
+    "woodfloor": "./textures/woodfloor.jpg",
+    "bars": "./textures/bars.jpg",
+    "zombie": "./textures/zombie.png",
+    "zombieDeath": "./sounds/zombiedeath.wav",
+    "shoot": "./sounds/shoot.wav",
+    "empty": "./sounds/empty.wav",
+    "reload": "./sounds/reload.wav",
+    "building": "./textures/building.jpg",
+    "building2": "./textures/building2.jpg",
+    "building3": "./textures/building3.jpg",
+    "damage": "./sounds/damage.wav",
+    "death": "./sounds/death.wav"
   },
   "behaviors": {
     "KeyMove": "behavior_key_move",
@@ -140,6 +163,17 @@
     "DeleteOnCollision": "behavior_delete_on_collision",
     "Portal": "behavior_portal",
     "InverseGravity": "behavior_inverse_gravity",
-    "Platform": "behavior_platform"
+    "Platform": "behavior_platform",
+    "Disappear": "behavior_disappear",
+    "EnableHighlight": "behavior_highlight",
+    "Goto": "behavior_goto",
+    "GotoSupervisor": "behavior_goto_sup",
+    "HighlightColor": "behavior_highlight",
+    "KeyFly": "behavior_key_fly",
+    "Movie": "behavior_movie",
+    "Pickup": "behavior_pickup",
+    "Switch": "behavior_switch",
+    "Shoot": "behavior_shoot",
+    "SpawnPowerUp": "behavior_spawn_power_up"
   }
 }
