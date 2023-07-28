@@ -21,7 +21,8 @@
         "XRotation": "behavior_x_rotation",
         "YRotation": "behavior_y_rotation",
         "ZRotation": "behavior_z_rotation",
-        "Shoot": "behavior_shoot"
+        "Shoot": "behavior_shoot",
+        "SpawnPowerUp": "behavior_spawn_power_up"
     },
     "files": {
         "bgmusic": "./sounds/background_music.mp3",

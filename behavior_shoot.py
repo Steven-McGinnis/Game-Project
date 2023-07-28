@@ -14,14 +14,13 @@ class Shoot(Behavior):
         self.connected_object = game_object
 
     def clicked(self, game_object):
-        print(self.connected_object.identifier)
-        print(self.sound)
         if self.sound:
-            Sounds.play_sound(self.sound)  # Play the sound
-        self.delete_object()  # Then delete the object
+            Sounds.play_sound(self.sound)
+        self.delete_object()
 
     def delete_object(self):
-        if self.game_object.id in GameLogic.game_objects:  # Check before deletion
+        if self.game_object.id in GameLogic.game_objects: # type: ignore
+            enemy_position = self.game_object.position # type: ignore
             GameLogic.delete_object(self.game_object)
             GameLogic.total_enemies -= 1
-            pub.sendMessage("enemy_destroyed")
+            pub.sendMessage("enemy_destroyed",  position=enemy_position)

@@ -13,6 +13,7 @@ import pygame
 from game_logic import GameLogic
 from view_world import WorldView
 from logger import Logger
+import time
 
 
 class PlayerView:
@@ -27,6 +28,8 @@ class PlayerView:
         
         self.subscribe_to_events()
         self.create_hud_variables()
+        self.last_ammo_update = 0  # initialize the last update time to 0
+        self.cooldown_period = 1  # cooldown period in seconds (set as needed)
 
     def subscribe_to_events(self):
         pub.subscribe(self.new_game_object, "create")
@@ -432,8 +435,16 @@ class PlayerView:
             self.stamina = 100
 
     def addAmmo(self):
+        current_time = time.time()  # get the current time
+
+        # check if the cooldown period has passed
+        if current_time - self.last_ammo_update < self.cooldown_period:
+            print("Too quick! Wait for the cooldown period.")
+            return
+
         self.ammo += 21
         self.update_health_stamina_textures()
+        self.last_ammo_update = current_time
 
     def shoot(self):
         if self.ammo > 0:

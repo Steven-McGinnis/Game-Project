@@ -12,7 +12,6 @@ class InverseGravity(Behavior):
 
     def inverse_gravity(self):
         Sounds.play_sound("antigrav")
-        print("inverse gravity")
         self.reversed = True
         pub.sendMessage("inverse_gravity")
 

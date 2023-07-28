@@ -5,7 +5,6 @@ class Logger:
         self.log = []
 
     def add_log(self, entry):
-        print("Test", entry)
         self.log.append(entry)
         self.log = self.log[-5:]
         pub.sendMessage("log")

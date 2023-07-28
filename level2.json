@@ -5,6 +5,7 @@
   "objects": [
     {
       "kind": "player",
+      "identifier": "player",
       "position": [0.0, 0.0, 0.0],
       "behaviors": {
         "KeyMove": [0.1],

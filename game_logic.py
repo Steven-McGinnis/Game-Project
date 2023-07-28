@@ -25,6 +25,7 @@ class GameLogic:
     total_enemies = 0
     round_timer = 0
     enemy_speed = 0.01
+    ammo = 20
 
     next_id = 0
 
@@ -219,11 +220,18 @@ class GameLogic:
     
     @staticmethod
     def collisionType(obj1, obj2):
+        # If either object or identifier is None, do nothing
+        if obj1 is None or obj2 is None or not hasattr(obj1, 'identifier') or not hasattr(obj2, 'identifier') or obj1.identifier is None or obj2.identifier is None:
+            return
+        
         player, other = GameLogic.order_objects(obj1, obj2)
-
-        if other.identifier in ["power_up", "portal", "inverse"]:
-            print(other.identifier, other.identifier)
+        if other.identifier.startswith("power_up") or \
+        other.identifier.startswith("portal") or \
+        other.identifier.startswith("inverse") or \
+        other.identifier.startswith("ammo"):
             pub.sendMessage("collision", obj=other)
+
+
 
     @staticmethod
     def replace(data):
@@ -339,7 +347,8 @@ class GameLogic:
             },
             "behaviors": {
                 "Goto": ["player", GameLogic.enemy_speed, 1.0],
-                "Shoot": ["zombieDeath"]
+                "Shoot": ["zombieDeath"],
+                "SpawnPowerUp" : []
             }
         }
 
@@ -355,3 +364,38 @@ class GameLogic:
             enemy.add_behavior(instance)
             
         return enemy
+
+    @staticmethod
+    def create_powerup(position):
+        unique_id = str(GameLogic.next_id)
+        # Define the powerup data
+        powerup_data = {
+            "kind": "cube2",  # or another model you prefer
+            "position": position,
+            "identifier": "ammo" + unique_id,
+            "faces": {
+                "front": {"type": "texture", "value": "ammo"},
+                "back": {"type": "texture", "value": "ammo"},
+                "left": {"type": "texture", "value": "ammo"},
+                "right": {"type": "texture", "value": "ammo"},
+            },
+            "rotation": [10, 10, 10],
+            "size": [0.25, 0.25, 0.25],
+            "behaviors": {
+                "PowerUpBob": [0.1, 5],
+                "DeleteOnCollision": [],
+            }
+        }
+
+        # Create the powerup using create_object function
+        powerup = GameLogic.create_object(powerup_data)
+
+        # If the powerup has behaviors, add them as you do for enemies
+        for behavior in powerup_data["behaviors"]:
+            module = importlib.import_module(GameLogic.level_data["behaviors"][behavior])
+            class_ = getattr(module, behavior)
+            instance = class_(*powerup_data["behaviors"][behavior])
+            instance.arguments = powerup_data["behaviors"][behavior]
+            powerup.add_behavior(instance)
+
+        return powerup

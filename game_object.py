@@ -139,3 +139,9 @@ class GameObject:
 
     def inverseGravity(self):
         self.gravity = not self.gravity
+
+    def mark_as_collided(self):
+        if not self.collided:
+            self.collided = True
+        else:
+            raise ValueError("Object has already collided")
