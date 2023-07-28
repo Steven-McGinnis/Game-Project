@@ -13,6 +13,8 @@ class GameLogic:
     deletions = []
     level_data = {}
     filename = None
+    round = 0
+    enemies = 20
 
     next_id = 0
 
@@ -76,7 +78,7 @@ class GameLogic:
                     if "music" in level_data["level"]:
                         from sounds import Sounds
 
-                        Sounds.play_music(level_data["level"]["music"])
+                        
 
     @staticmethod
     def save_world():

@@ -114,8 +114,8 @@ class PlayerViewEditor:
     def setup(self):
         pygame.init()
 
-        self.window_width = 1920
-        self.window_height = 1080
+        self.window_width = 1024
+        self.window_height = 768
         self.viewCenter = (self.window_width // 2, self.window_height // 2)
 
         pygame.display.set_mode(
@@ -312,7 +312,7 @@ class PlayerViewEditor:
             self.render_hud()
 
             pygame.display.flip()
-            self.clock.tick(30)  # Performance problems
+            self.clock.tick(60)  # Performance problems
 
     def update_hud_texture(self):
         surface = pygame.Surface((800, 30), flags=pygame.SRCALPHA)
@@ -599,6 +599,7 @@ class PlayerViewEditor:
             self.render_health_stamina()  # Call the new function here
 
         self.render_log()
+        self.render_editor_info()
         if self.input_mode:
             glEnable(GL_TEXTURE_2D)
             glBindTexture(GL_TEXTURE_2D, self.hud_texture)
@@ -740,3 +741,56 @@ class PlayerViewEditor:
         if self.ammo > 0:
             self.ammo -= 1
             self.update_health_stamina_textures()
+
+    def render_editor_info(self):
+        modes = [
+            "Edit mode: " + str(self.edit_mode) + ", press 'E' to change",
+            "Position mode: " + str(self.position_mode) + ", press 'F' to change",
+            "Size mode: " + str(self.size_mode) + ", press 'C' to change",
+            "Change by scrolling mousewheel",
+        ]
+
+        y = self.window_height - 30  # Adjust the starting position
+
+        for mode in modes:
+            img = pygame.font.SysFont("Arial", 20).render(
+                mode, True, (255, 255, 255)  # Use white color
+            )
+            w, h = img.get_size()
+
+            # Center the text
+            x = (self.window_width - w) // 2
+
+            img = pygame.transform.flip(img, False, True)  # Flip the image
+            data = pygame.image.tostring(img, "RGBA", 1)  # type: ignore
+            texture = glGenTextures(1)
+            glBindTexture(GL_TEXTURE_2D, texture)
+            glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+            glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+            glTexImage2D(
+                GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data
+            )
+
+            glEnable(GL_TEXTURE_2D)
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+            glBegin(GL_QUADS)
+            glColor4f(1.0, 1.0, 1.0, 1.0)  # White color to keep texture color
+            glTexCoord2f(0.0, 0.0)
+            glVertex2f(x, y)
+            glTexCoord2f(1.0, 0.0)
+            glVertex2f(x + w, y)
+            glTexCoord2f(1.0, 1.0)
+            glVertex2f(x + w, y - h)
+            glTexCoord2f(0.0, 1.0)
+            glVertex2f(x, y - h)
+            glEnd()
+
+            glDeleteTextures([texture])  # Delete the texture after using it
+            glDisable(GL_TEXTURE_2D)
+            glDisable(GL_BLEND)
+
+            y -= (
+                h + 10
+            )  # Move up for the next mode. Adjust the 10 to change the space between lines.
