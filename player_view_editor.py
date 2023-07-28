@@ -15,13 +15,19 @@ from view_world import WorldView
 from logger import Logger
 
 
-class PlayerView:
+class PlayerViewEditor:
     def __init__(self):
         self.player = None
         self.paused = False
         self.setup()
+        self.distance = 1.5
         self.logger = Logger()
         self.clock = pygame.time.Clock()
+        self.edit_mode = False
+
+        GameLogic.set_property("paused", True)
+
+        self.camera_direction = [0.0, 0.0, -1.0]
         
         self.view_objects = {}
         
@@ -101,7 +107,6 @@ class PlayerView:
         self.viewMatrix = glGetFloatv(GL_MODELVIEW_MATRIX)
 
     def tick(self):
-        global clicks
         mouseMove = (0, 0)
         clicked = False
         for event in pygame.event.get():
@@ -109,9 +114,6 @@ class PlayerView:
                 pygame.quit()
                 GameLogic.set_property("quit", True)
                 return
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                clicked = True
 
 
             if event.type == pygame.KEYDOWN:
@@ -131,10 +133,27 @@ class PlayerView:
                 if event.key == pygame.K_l:
                     Localize.switch_language()
 
+                if event.key == pygame.K_s and pygame.key.get_mods() & pygame.KMOD_CTRL:
+                    Localize.save()
+                    GameLogic.save_world()
+
+                if event.key == pygame.K_e:
+                    self.edit_mode = not self.edit_mode
+
+
             if not self.paused:
                 if event.type == pygame.MOUSEMOTION:
                     mouseMove = [event.pos[i] - self.viewCenter[i] for i in range(2)]
                 pygame.mouse.set_pos(self.viewCenter)
+
+                if event.type == pygame.MOUSEWHEEL:
+                    self.distance = max(1.5, self.distance+event.y)
+
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    clicked = True
+
+                    if self.edit_mode:
+                        self.create_object()
 
         # If Not Paused Do This
         if not self.paused:
@@ -171,6 +190,13 @@ class PlayerView:
                 )
                 self.viewMatrix = glGetFloatv(GL_MODELVIEW_MATRIX)
 
+                camera_direction = numpy.linalg.inv(self.viewMatrix)
+                camera_direction = camera_direction[2][0:3]
+                camera_direction[0] *= -1
+                camera_direction[1] *= -1
+                camera_direction[2] *= -1
+                self.camera_direction = camera_direction
+
             if keypress[pygame.K_LSHIFT] == False and self.stamina < 100:
                 self.recover_stamina(1)
 
@@ -183,6 +209,8 @@ class PlayerView:
 
             self.display()
             glPopMatrix()
+            self.draw_guide()
+
 
             self.disable_lighting()
 
@@ -190,6 +218,71 @@ class PlayerView:
 
             pygame.display.flip()
             self.clock.tick(60)
+
+    def draw_guide(self):
+        if not self.edit_mode:
+            return
+    
+        camera_direction = numpy.array(self.camera_direction)
+        current = numpy.array(self.player.position) # type: ignore
+        
+
+        position = (current + self.distance * camera_direction).tolist()
+        position[0] = round(position[0])
+        position[1] = round(position[1])
+        position[2] = round(position[2])
+
+        glPushMatrix()
+        glTranslate(*position)  
+
+        glBegin(GL_QUADS)
+        glColor(0.25, 0.25, 0.25, 0.5)
+        glNormal3f(0.0, 0.0, 1.0)
+        glVertex3d(-0.5, 0.5, 0.5)
+        glVertex3d(-0.5, -0.5, 0.5)
+        glVertex3d(0.5, -0.5, 0.5)
+        glVertex3d(0.5, 0.5, 0.5)
+        glNormal3f(-1.0, 0.0, 0.0)
+        glVertex3d(-0.5, 0.5, -0.5)
+        glVertex3d(-0.5, -0.5, -0.5)
+        glVertex3d(-0.5, -0.5, 0.5)
+        glVertex3d(-0.5, 0.5, 0.5)
+        glNormal3f(0.0, 0.0, -1.0)
+        glVertex3d(0.5, 0.5, -0.5)
+        glVertex3d(0.5, -0.5, -0.5)
+        glVertex3d(-0.5, -0.5, -0.5)
+        glVertex3d(-0.5, 0.5, -0.5)
+        glNormal3f(1.0, 0.0, 0.0)
+        glVertex3d(0.5, 0.5, 0.5)
+        glVertex3d(0.5, -0.5, 0.5)
+        glVertex3d(0.5, -0.5, -0.5)
+        glVertex3d(0.5, 0.5, -0.5)
+        glNormal3f(0.0, 1.0, 0.0)
+        glVertex3d(-0.5, 0.5, -0.5)
+        glVertex3d(-0.5, 0.5, 0.5)
+        glVertex3d(0.5, 0.5, 0.5)
+        glVertex3d(0.5, 0.5, -0.5)
+        glNormal3f(0.0, -1.0, 0.0)
+        glVertex3d(-0.5, -0.5, 0.5)
+        glVertex3d(-0.5, -0.5, -0.5)
+        glVertex3d(0.5, -0.5, -0.5)
+        glVertex3d(0.5, -0.5, 0.5)
+        glEnd()
+
+        glPopMatrix()
+        
+
+
+    def create_object(self):
+        camera_direction = numpy.array(self.camera_direction)
+        current = numpy.array(self.player.position) # type: ignore
+
+        position = (current + self.distance * camera_direction).tolist()
+        position[0] = round(position[0])
+        position[1] = round(position[1])
+        position[2] = round(position[2])
+
+        GameLogic.create_object({"kind": "cube2", "position": position})
 
     # Display All Objects in Scene
     def display(self):
@@ -230,12 +323,14 @@ class PlayerView:
         glEnable(GL_COLOR_MATERIAL)
         glDepthFunc(GL_LESS)
         glEnable(GL_DEPTH_TEST)
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
     def handle_mouse(self, pos, clicked):
         windowX = pos[0]
         windowY = self.window_height - pos[1]
 
-        glSelectBuffer(100)
+        glSelectBuffer(200)
         glRenderMode(GL_SELECT)
 
         glMatrixMode(GL_PROJECTION)
