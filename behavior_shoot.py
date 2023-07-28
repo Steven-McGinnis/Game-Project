@@ -1,6 +1,7 @@
 from behavior import Behavior
 from game_logic import GameLogic
 from sounds import Sounds
+from pubsub import pub
 
 class Shoot(Behavior):
     def __init__(self, sound=None):
@@ -14,11 +15,13 @@ class Shoot(Behavior):
 
     def clicked(self, game_object):
         print(self.connected_object.identifier)
-        if self.connected_object.identifier == 'enemy':
-            print("Shoot clicked")
-            print(self.sound)
-            if self.sound:
-                Sounds.play_sound(self.sound, self.delete_object)
+        print(self.sound)
+        if self.sound:
+            Sounds.play_sound(self.sound)  # Play the sound
+        self.delete_object()  # Then delete the object
 
     def delete_object(self):
-        GameLogic.delete_object(self.connected_object)
+        if self.game_object.id in GameLogic.game_objects:  # Check before deletion
+            GameLogic.delete_object(self.game_object)
+            GameLogic.total_enemies -= 1
+            pub.sendMessage("enemy_destroyed")

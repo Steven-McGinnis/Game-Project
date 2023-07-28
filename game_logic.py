@@ -325,12 +325,12 @@ class GameLogic:
         random_z = max(min_z, min(max_z, random_z))
 
         position = [random_x, 0.0, random_z]
-
+        unique_id = str(GameLogic.next_id)
         # Define the enemy data
         enemy_data = {
             "kind": "cube2",
             "position": position,
-            "identifier": "enemy",
+            "identifier": "enemy" + unique_id,
             "faces": {
                 "front": {"type": "texture", "value": "zombie"},
                 "back": {"type": "texture", "value": "zombie"},
@@ -339,7 +339,7 @@ class GameLogic:
             },
             "behaviors": {
                 "Goto": ["player", GameLogic.enemy_speed, 1.0],
-                "Shoot": ["unlock"]
+                "Shoot": ["zombieDeath"]
             }
         }
 
