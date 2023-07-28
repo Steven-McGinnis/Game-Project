@@ -1,7 +1,7 @@
-from OpenGL.GL import * # type: ignore
-from OpenGL.GLU import * # type: ignore
+from OpenGL.GL import *  # type: ignore
+from OpenGL.GLU import *  # type: ignore
 from pubsub import pub
-from pygame.locals import * # type: ignore
+from pygame.locals import *  # type: ignore
 from view_cube import CubeView
 from view_sphere import SphereView
 from view_cube2 import CubeViewColor
@@ -13,6 +13,7 @@ import pygame
 from game_logic import GameLogic
 from view_world import WorldView
 from logger import Logger
+from memory_profiler import profile
 
 
 class PlayerViewEditor:
@@ -40,14 +41,15 @@ class PlayerViewEditor:
 
         # Set the Camera Direction
         self.camera_direction = [0.0, 0.0, -1.0]
-        
+
         # Create Dictionary to hold all rendered objects.
         self.view_objects = {}
-        
+
         # Create a list to hold all the textures
         self.textures = []
         # Set the current texture to 0
         self.current_texture = 0
+        self.input_mode = False
 
         # Subscribe to Events
         self.subscribe_to_events()
@@ -62,7 +64,7 @@ class PlayerViewEditor:
         pub.subscribe(self.delete_game_object, "delete")
         pub.subscribe(self.addAmmo, "ammo")
         pub.subscribe(self.deleteAll, "delete_all")
-    
+
     # Clears out all the View Objects for the Level
     def deleteAll(self):
         self.view_objects = {}
@@ -70,8 +72,6 @@ class PlayerViewEditor:
     def delete_game_object(self, game_object):
         if game_object.id in self.view_objects:
             del self.view_objects[game_object.id]
-
-
 
     def create_hud_variables(self):
         self.health = 100
@@ -129,6 +129,7 @@ class PlayerViewEditor:
         self.prepare_3d()
         self.viewMatrix = glGetFloatv(GL_MODELVIEW_MATRIX)
 
+        self.hud_texture = glGenTextures(1)
 
     def find_textures(self):
         self.textures = []
@@ -136,7 +137,6 @@ class PlayerViewEditor:
         for file in GameLogic.files:
             if GameLogic.files[file].startswith("./textures/"):
                 self.textures.append(file)
-
 
     def tick(self):
         if not self.textures:
@@ -147,6 +147,8 @@ class PlayerViewEditor:
 
         self.apply_texture = False
         self.clear_texture = False
+        self.set_name = False
+        self.get_name = False
 
         self.position_adjust = 0.0
         self.size_adjust = 0.0
@@ -157,47 +159,70 @@ class PlayerViewEditor:
                 GameLogic.set_property("quit", True)
                 return
 
-
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     GameLogic.set_property("quit", True)
                     return
 
-                if event.key == pygame.K_SPACE:
-                    pub.sendMessage("key-jump")
+                if self.input_mode:
+                    if event.key == pygame.K_RETURN:
+                        self.input_mode = False
+                        self.set_name = True
+                    elif event.key == pygame.K_BACKSPACE:
+                        self.input = self.input[:-1]
 
-                if event.key == pygame.K_p:
-                    self.paused = not self.paused
-                    GameLogic.set_property("paused", self.paused)
-                    pygame.mouse.set_pos(self.viewCenter)
+                    else:
+                        self.input += event.unicode
 
-                if event.key == pygame.K_l:
-                    Localize.switch_language()
+                    self.update_hud_texture()
 
-                if event.key == pygame.K_s and pygame.key.get_mods() & pygame.KMOD_CTRL:
-                    Localize.save()
-                    GameLogic.save_world()
+                if not self.input_mode:
+                    if event.key == pygame.K_n:
+                        self.input_mode = True
+                        self.get_name = True
+                        self.input = ""
+                        self.update_hud_texture()
+                    if event.key == pygame.K_SPACE:
+                        pub.sendMessage("key-jump")
 
-                if event.key == pygame.K_e:
-                    self.edit_mode = not self.edit_mode
+                    if event.key == pygame.K_p:
+                        self.paused = not self.paused
+                        GameLogic.set_property("paused", self.paused)
+                        pygame.mouse.set_pos(self.viewCenter)
 
-                if event.key == pygame.K_t:
-                    self.current_texture = (self.current_texture + 1) % len(self.textures)
-                    self.logger.add_log(_("Texture: ") + self.textures[self.current_texture])
+                    if event.key == pygame.K_l:
+                        Localize.switch_language()
 
-                if event.key == pygame.K_r:
-                    self.apply_texture = True
+                    if (
+                        event.key == pygame.K_s
+                        and pygame.key.get_mods() & pygame.KMOD_CTRL
+                    ):
+                        Localize.save()
+                        GameLogic.save_world()
 
-                if event.key == pygame.K_z:
-                    self.clear_texture = True
+                    if event.key == pygame.K_e:
+                        self.edit_mode = not self.edit_mode
 
-                if event.key == pygame.K_f:
-                    self.position_mode = not self.position_mode
+                    if event.key == pygame.K_t:
+                        self.current_texture = (self.current_texture + 1) % len(
+                            self.textures
+                        )
+                        self.logger.add_log(
+                            _("Texture: ") + self.textures[self.current_texture]
+                        )
 
-                if event.key == pygame.K_c:
-                    self.size_mode = not self.size_mode
+                    if event.key == pygame.K_r:
+                        self.apply_texture = True
 
+                    if event.key == pygame.K_z:
+                        self.clear_texture = True
+
+                    if event.key == pygame.K_f:
+                        self.position_mode = not self.position_mode
+
+                    if event.key == pygame.K_c:
+                        self.size_mode = not self.size_mode
 
             if not self.paused:
                 if event.type == pygame.MOUSEMOTION:
@@ -206,7 +231,7 @@ class PlayerViewEditor:
 
                 if event.type == pygame.MOUSEWHEEL:
                     if self.edit_mode:
-                        self.distance = max(1.5, self.distance+event.y)
+                        self.distance = max(1.5, self.distance + event.y)
 
                     if self.position_mode:
                         self.position_adjust = event.y * 0.1
@@ -226,22 +251,23 @@ class PlayerViewEditor:
             self.handle_mouse(pos, clicked)
             self.prepare_3d()
 
-            keypress = pygame.key.get_pressed()
-            if keypress[pygame.K_w]:
-                pub.sendMessage("key-w")
+            if not self.input_mode:
+                keypress = pygame.key.get_pressed()
+                if keypress[pygame.K_w]:
+                    pub.sendMessage("key-w", camera_direction=self.camera_direction)
 
-            if keypress[pygame.K_s]:
-                pub.sendMessage("key-s")
+                if keypress[pygame.K_s]:
+                    pub.sendMessage("key-s", camera_direction=self.camera_direction)
 
-            if keypress[pygame.K_a]:
-                pub.sendMessage("key-a")
+                if keypress[pygame.K_a]:
+                    pub.sendMessage("key-a")
 
-            if keypress[pygame.K_d]:
-                pub.sendMessage("key-d")
+                if keypress[pygame.K_d]:
+                    pub.sendMessage("key-d")
 
-            if self.hud:
-                if keypress[pygame.K_LSHIFT]:
-                    self.use_stamina(1)
+                if self.hud:
+                    if keypress[pygame.K_LSHIFT]:
+                        self.use_stamina(1)
 
             pub.sendMessage("rotate-y", amount=mouseMove[0])
             pub.sendMessage("rotate-x", amount=mouseMove[1])
@@ -267,7 +293,6 @@ class PlayerViewEditor:
                 if keypress[pygame.K_LSHIFT] == False and self.stamina < 100:
                     self.recover_stamina(1)
 
-
             self.enable_lighting()
 
             glClearColor(0.53, 0.81, 0.92, 1.0)
@@ -278,21 +303,43 @@ class PlayerViewEditor:
             glPopMatrix()
             self.draw_guide()
 
-
             self.disable_lighting()
 
             self.render_hud()
 
             pygame.display.flip()
-            self.clock.tick(60)
+            self.clock.tick(30)  # Performance problems
+
+    def update_hud_texture(self):
+        surface = pygame.Surface((800, 30), flags=pygame.SRCALPHA)
+        surface.fill(pygame.Color("lightskyblue"))
+
+        text = pygame.font.SysFont("Arial", 25).render(
+            self.input, True, (255, 255, 255)
+        )
+        surface.blit(text, (0, 0))
+
+        # Flip the surface vertically
+        surface = pygame.transform.flip(surface, False, True)
+
+        w, h = surface.get_size()
+
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+        glBindTexture(GL_TEXTURE_2D, self.hud_texture)
+        glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        data = pygame.image.tostring(surface, "RGBA", 1)  # type: ignore
+        glTexImage2D(
+            GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data
+        )
 
     def draw_guide(self):
         if not self.edit_mode:
             return
-    
+
         camera_direction = numpy.array(self.camera_direction)
-        current = numpy.array(self.player.position) # type: ignore
-        
+        current = numpy.array(self.player.position)  # type: ignore
+
         position = (current + self.distance * camera_direction).tolist()
 
         position[0] = round(position[0])
@@ -300,7 +347,7 @@ class PlayerViewEditor:
         position[2] = round(position[2])
 
         glPushMatrix()
-        glTranslate(*position)  
+        glTranslate(*position)
 
         glBegin(GL_QUADS)
         glColor(0.25, 0.25, 0.25, 0.5)
@@ -337,12 +384,10 @@ class PlayerViewEditor:
         glEnd()
 
         glPopMatrix()
-        
-
 
     def create_object(self):
         camera_direction = numpy.array(self.camera_direction)
-        current = numpy.array(self.player.position) # type: ignore
+        current = numpy.array(self.player.position)  # type: ignore
 
         position = (current + self.distance * camera_direction).tolist()
         position[0] = round(position[0])
@@ -372,10 +417,10 @@ class PlayerViewEditor:
         if game_object.kind == "player":
             self.player = game_object
 
-        if game_object.kind == 'world':
+        if game_object.kind == "world":
             self.view_objects[game_object.id] = WorldView(game_object)
 
-        if game_object.kind == 'cube2':
+        if game_object.kind == "cube2":
             self.view_objects[game_object.id] = CubeViewColor(game_object)
 
     def prepare_3d(self):
@@ -449,10 +494,20 @@ class PlayerViewEditor:
 
         if closest:
             closest.hover(self.player)
-            
+
+            if self.set_name:
+                closest._identifier = self.input
+
+            if self.get_name:
+                self.input = closest.identifier
+                self.update_hud_texture()
+
             if self.apply_texture:
                 for face in self.get_faces(closest):
-                    closest.faces[face] = {'type': 'texture', 'value': self.textures[self.current_texture]}
+                    closest.faces[face] = {
+                        "type": "texture",
+                        "value": self.textures[self.current_texture],
+                    }
 
             if self.clear_texture:
                 for face in self.get_faces(closest):
@@ -460,21 +515,29 @@ class PlayerViewEditor:
 
             if self.position_mode and self.position_adjust:
                 for face in self.get_faces(closest):
-                    if face == 'front':
+                    if face == "front":
                         closest.position[2] += self.position_adjust
-                    if face == 'back':
+                    if face == "back":
                         closest.position[2] -= self.position_adjust
-                    if face == 'left':
+                    if face == "left":
                         closest.position[0] += self.position_adjust
-                    if face == 'right':
+                    if face == "right":
                         closest.position[0] -= self.position_adjust
-                    if face == 'top':
+                    if face == "top":
                         closest.position[1] -= self.position_adjust
-                    if face == 'bottom':
+                    if face == "bottom":
                         closest.position[1] += self.position_adjust
 
             if self.size_mode and self.size_adjust:
-                pass
+                for face in self.get_faces(closest):
+                    if face == "front" or face == "back":
+                        closest.size[2] += self.size_adjust
+
+                    if face == "left" or face == "right":
+                        closest.size[0] += self.size_adjust
+
+                    if face == "top" or face == "bottom":
+                        closest.size[1] += self.size_adjust
 
             if clicked:
                 closest.clicked(self.player)
@@ -482,11 +545,10 @@ class PlayerViewEditor:
                     self.shoot()
                 if closest.identifier:
                     self.logger.add_log(_("Object clicked: ") + closest.identifier)
-        
 
     def get_faces(self, game_object):
         camera_direction = numpy.array(self.camera_direction)
-        current = numpy.array(self.player.position) # type: ignore
+        current = numpy.array(self.player.position)  # type: ignore
 
         mypos = current + 1.5 * camera_direction
 
@@ -514,12 +576,11 @@ class PlayerViewEditor:
 
             if index == 2 and direction_vector[index] < 0:
                 results.append("front")
-            
+
             if index == 2 and direction_vector[index] > 0:
                 results.append("back")
-            
-        return results
 
+        return results
 
     # Sets the Modes and Renders the HUD
     def render_hud(self):
@@ -535,12 +596,27 @@ class PlayerViewEditor:
             self.render_health_stamina()  # Call the new function here
 
         self.render_log()
+        if self.input_mode:
+            glEnable(GL_TEXTURE_2D)
+            glBindTexture(GL_TEXTURE_2D, self.hud_texture)
+            glBegin(GL_QUADS)
+
+            glTexCoord2f(0.0, 1.0)
+            glVertex2f(0, 570)
+            glTexCoord2f(1.0, 1.0)
+            glVertex2f(800, 570)
+            glTexCoord2f(1.0, 0.0)
+            glVertex2f(800, 600)
+            glTexCoord2f(0.0, 0.0)
+            glVertex2f(0, 600)
+
+            glEnd()
+            glDisable(GL_TEXTURE_2D)
 
         glDisable(GL_BLEND)
 
         glEnable(GL_DEPTH_TEST)
         glDepthMask(GL_TRUE)
-        
 
     def render_health_stamina(self):
         glEnable(GL_TEXTURE_2D)
@@ -556,7 +632,6 @@ class PlayerViewEditor:
         # Render Ammo
         glBindTexture(GL_TEXTURE_2D, self.ammo_texture)
         self.render_text_quad(10, self.window_height - 120)
-        
 
         glDisable(GL_TEXTURE_2D)
         glDisable(GL_BLEND)
@@ -633,8 +708,6 @@ class PlayerViewEditor:
 
             y -= 30  # Move up for the next entry
 
-
-
     def take_damage(self, amount):
         self.health -= amount
         self.update_health_stamina_textures()
@@ -644,7 +717,7 @@ class PlayerViewEditor:
         self.update_health_stamina_textures()
 
     def use_stamina(self, amount):
-        if self.stamina > 0: 
+        if self.stamina > 0:
             self.stamina -= amount
             self.update_health_stamina_textures()
 

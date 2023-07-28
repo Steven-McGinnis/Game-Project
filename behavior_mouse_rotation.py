@@ -12,7 +12,7 @@ class MouseRotation(Behavior):
         pub.subscribe(self.rotate_x, "rotate-x")
 
     def rotate_y(self, amount):
-        self.game_object.y_rotation += amount * self.speed # type: ignore
+        self.game_object.y_rotation += amount * self.speed  # type: ignore
 
     def rotate_x(self, amount):
-        self.game_object.x_rotation += amount * self.speed # type: ignore
+        self.game_object.x_rotation += amount * self.speed  # type: ignore

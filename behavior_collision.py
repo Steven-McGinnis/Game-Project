@@ -2,6 +2,7 @@ from behavior import Behavior
 from pubsub import pub
 import numpy as np
 import math
+from memory_profiler import profile
 
 
 class BlockedByObjects(Behavior):

@@ -4,14 +4,13 @@
         "DeleteOnCollision": "behavior_delete_on_collision",
         "Disappear": "behavior_disappear",
         "EnableHighlight": "behavior_highlight",
-        "Friction": "behavior_friction",
         "GainSpeed": "behavior_gain_speed",
         "Goto": "behavior_goto",
         "GotoSupervisor": "behavior_goto_sup",
         "Gravity": "behavior_gravity",
         "HighlightColor": "behavior_highlight",
-        "IceSlide": "behavior_ice",
         "Jump": "behavior_jump",
+        "KeyFly": "behavior_key_fly",
         "KeyMove": "behavior_key_move",
         "MouseRotation": "behavior_mouse_rotation",
         "Movie": "behavior_movie",
@@ -46,7 +45,7 @@
                     0.5,
                     0.05
                 ],
-                "KeyMove": [
+                "KeyFly": [
                     0.09
                 ],
                 "MouseRotation": [
@@ -56,13 +55,13 @@
             "identifier": "player",
             "kind": "player",
             "position": [
-                -0.8732109092280861,
-                0.0,
-                1.4379874513043645
+                0.4378507003083233,
+                -0.1708647267660126,
+                3.1345325902594805
             ],
             "rotation": [
-                -0.19999999999999823,
-                -205.50000000000006,
+                1.8999999999999957,
+                -214.00000000000017,
                 0
             ],
             "size": [
@@ -374,27 +373,6 @@
         },
         {
             "behaviors": {
-                "PowerUpBob": [
-                    0.1,
-                    5
-                ]
-            },
-            "identifier": "power_up",
-            "kind": "sphere",
-            "position": [
-                8.0,
-                0.0,
-                -5.0
-            ],
-            "size": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "texture": "./textures/orbTexture2.png"
-        },
-        {
-            "behaviors": {
                 "Pickup": [
                     "key1",
                     true
@@ -598,6 +576,7 @@
                     "value": "rock"
                 }
             },
+            "identifier": "Big",
             "kind": "cube2",
             "position": [
                 1,

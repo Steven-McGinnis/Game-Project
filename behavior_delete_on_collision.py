@@ -3,6 +3,7 @@ from game_logic import GameLogic
 from pubsub import pub
 from behavior import Behavior
 from logger import Logger
+from memory_profiler import profile as Profile
 
 
 class DeleteOnCollision(Behavior):
@@ -15,6 +16,7 @@ class DeleteOnCollision(Behavior):
         with open("collision.json", "r") as f:
             self.identifier_to_message = json.load(f)
 
+    @Profile
     def collided(self, obj):
         # check if the object has been collided with before
         if obj.collided:

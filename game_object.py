@@ -1,16 +1,17 @@
 from pubsub import pub
 
+
 class GameObject:
     def __init__(self, id, data):
         self.properties = {}
 
-        self.position = data.get('position')
+        self.position = data.get("position")
         self.id = id
-        self.kind = data.get('kind')
-        self.size = data.get('size', [1.0, 1.0, 1.0])
-        self.texture = data.get('texture', None)
-        self._identifier = data.get('identifier', None)
-        self.faces = data.get('faces', {})
+        self.kind = data.get("kind")
+        self.size = data.get("size", [1.0, 1.0, 1.0])
+        self.texture = data.get("texture", None)
+        self._identifier = data.get("identifier", None)
+        self.faces = data.get("faces", {})
 
         self._highlight = False
         self.visible = True
@@ -19,7 +20,7 @@ class GameObject:
         self.y_rotation = 0
         self.z_rotation = 0
 
-        rotation = data.get('rotation')
+        rotation = data.get("rotation")
         if rotation is not None:
             self.x_rotation, self.y_rotation, self.z_rotation = rotation
 
@@ -45,6 +46,10 @@ class GameObject:
     @property
     def identifier(self):
         return self._identifier
+
+    @identifier.setter
+    def identifier(self, value):
+        self._identifier = value
 
     @property
     def moved(self):
@@ -108,6 +113,7 @@ class GameObject:
 
     def tick(self):
         from game_logic import GameLogic
+
         if GameLogic.get_property("paused"):
             return
         self._moved = False

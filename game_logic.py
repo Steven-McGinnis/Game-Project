@@ -2,6 +2,7 @@ from game_object import GameObject
 from pubsub import pub
 import json
 import importlib
+from memory_profiler import profile
 
 
 class GameLogic:
@@ -36,7 +37,7 @@ class GameLogic:
         GameLogic.game_objects[obj.id] = obj
 
         if "identifier" in data:
-            GameLogic.identifier_index[data['identifier']] = obj
+            GameLogic.identifier_index[data["identifier"]] = obj
 
         pub.sendMessage("create", game_object=obj)
         return obj
@@ -68,53 +69,58 @@ class GameLogic:
 
                     obj.add_behavior(instance)
 
-                for file in level_data['files']:
-                    GameLogic.files[file] = level_data['files'][file]
+                for file in level_data["files"]:
+                    GameLogic.files[file] = level_data["files"][file]
 
                 if "level" in level_data:
-                    if 'music' in level_data['level']:
+                    if "music" in level_data["level"]:
                         from sounds import Sounds
-                        Sounds.play_music(level_data['level']['music'])
+
+                        Sounds.play_music(level_data["level"]["music"])
 
     @staticmethod
     def save_world():
-        if 'objects' in GameLogic.level_data:
-            del GameLogic.level_data['objects']
+        if "objects" in GameLogic.level_data:
+            del GameLogic.level_data["objects"]
 
-        GameLogic.level_data['objects'] = []
+        GameLogic.level_data["objects"] = []
 
         for game_object in GameLogic.game_objects:
             GameLogic.save_object(GameLogic.game_objects[game_object])
 
-        with open(GameLogic.filename, 'w') as outfile: # type: ignore
+        with open(GameLogic.filename, "w") as outfile:  # type: ignore
             json.dump(GameLogic.level_data, outfile, sort_keys=True, indent=4)
 
     @staticmethod
     def save_object(game_object):
         data = {}
 
-        data['kind'] = game_object.kind
-        data['position'] = game_object.position
-        data['size'] = game_object.size
+        data["kind"] = game_object.kind
+        data["position"] = game_object.position
+        data["size"] = game_object.size
 
         if game_object.faces:
-            data['faces'] = game_object.faces
-        
+            data["faces"] = game_object.faces
+
         if game_object.identifier:
-            data['identifier'] = game_object.identifier
+            data["identifier"] = game_object.identifier
 
         if game_object.texture:
-            data['texture'] = game_object.texture
+            data["texture"] = game_object.texture
 
         if game_object.x_rotation or game_object.y_rotation or game_object.z_rotation:
-            data['rotation'] = [game_object.x_rotation, game_object.y_rotation, game_object.z_rotation]
+            data["rotation"] = [
+                game_object.x_rotation,
+                game_object.y_rotation,
+                game_object.z_rotation,
+            ]
 
-        data['behaviors'] = {}
+        data["behaviors"] = {}
 
         for behavior in game_object.behaviors:
-            data['behaviors'][behavior] = game_object.behaviors[behavior].arguments
+            data["behaviors"][behavior] = game_object.behaviors[behavior].arguments
 
-        GameLogic.level_data['objects'].append(data)
+        GameLogic.level_data["objects"].append(data)
 
     @staticmethod
     def get_property(key, default=None):
@@ -127,6 +133,7 @@ class GameLogic:
     def set_property(key, value):
         GameLogic.properties[key] = value
 
+    @profile
     @staticmethod
     def collide(object1, object2):
         if object1 == object2:
@@ -190,6 +197,7 @@ class GameLogic:
             return obj1, obj2
         return obj2, obj1
 
+    @profile
     @staticmethod
     def collisionType(obj1, obj2):
         player, other = GameLogic.order_objects(obj1, obj2)
@@ -197,5 +205,3 @@ class GameLogic:
         if other.identifier in ["power_up", "portal", "inverse"]:
             print(other.identifier, other.identifier)
             pub.sendMessage("collision", obj=other)
-
-
