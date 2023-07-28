@@ -86,7 +86,7 @@ class GameLogic:
         for game_object in GameLogic.game_objects:
             GameLogic.save_object(GameLogic.game_objects[game_object])
 
-        with open(GameLogic.filename, 'w') as outfile:
+        with open(GameLogic.filename, 'w') as outfile: # type: ignore
             json.dump(GameLogic.level_data, outfile, sort_keys=True, indent=4)
 
     @staticmethod

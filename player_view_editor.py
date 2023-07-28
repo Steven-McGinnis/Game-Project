@@ -127,9 +127,23 @@ class PlayerViewEditor:
         self.prepare_3d()
         self.viewMatrix = glGetFloatv(GL_MODELVIEW_MATRIX)
 
+
+    def find_textures(self):
+        self.textures = []
+
+        for file in GameLogic.files:
+            if GameLogic.files[file].startswith("./textures/"):
+                self.textures.append(file)
+
+
     def tick(self):
+        if not self.textures:
+            self.find_textures()
+
         mouseMove = (0, 0)
         clicked = False
+        self.apply_texture = False
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -160,6 +174,12 @@ class PlayerViewEditor:
 
                 if event.key == pygame.K_e:
                     self.edit_mode = not self.edit_mode
+
+                if event.key == pygame.K_t:
+                    self.current_texture = (self.current_texture + 1) % len(self.textures)
+
+                if event.key == pygame.K_r:
+                    self.apply_texture = True
 
 
             if not self.paused:
@@ -405,9 +425,16 @@ class PlayerViewEditor:
 
         if closest:
             closest.hover(self.player)
+            
+            if self.apply_texture:
+                
+                closest.faces["front"] = {'type': 'texture', 'value': self.textures[self.current_texture]}
+
+
             if clicked:
                 closest.clicked(self.player)
-                self.shoot()
+                if self.hud:
+                    self.shoot()
                 if closest.identifier:
                     self.logger.add_log(_("Object clicked: ") + closest.identifier)
         
