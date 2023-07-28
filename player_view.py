@@ -17,8 +17,6 @@ from logger import Logger
 
 class PlayerView:
     def __init__(self):
-        GameLogic.set_property("paused", True)
-        
         self.player = None
         self.paused = False
         self.setup()
