@@ -142,7 +142,9 @@ class PlayerViewEditor:
 
         mouseMove = (0, 0)
         clicked = False
+
         self.apply_texture = False
+        self.clear_texture = False
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -181,6 +183,9 @@ class PlayerViewEditor:
 
                 if event.key == pygame.K_r:
                     self.apply_texture = True
+
+                if event.key == pygame.K_z:
+                    self.clear_texture = True
 
 
             if not self.paused:
@@ -270,8 +275,8 @@ class PlayerViewEditor:
         camera_direction = numpy.array(self.camera_direction)
         current = numpy.array(self.player.position) # type: ignore
         
-
         position = (current + self.distance * camera_direction).tolist()
+
         position[0] = round(position[0])
         position[1] = round(position[1])
         position[2] = round(position[2])
@@ -431,6 +436,9 @@ class PlayerViewEditor:
                 for face in self.get_faces(closest):
                     closest.faces[face] = {'type': 'texture', 'value': self.textures[self.current_texture]}
 
+            if self.clear_texture:
+                for face in self.get_faces(closest):
+                    del closest.faces[face]
 
             if clicked:
                 closest.clicked(self.player)
@@ -441,7 +449,11 @@ class PlayerViewEditor:
         
 
     def get_faces(self, game_object):
-        mypos = numpy.array(self.player.position) # type: ignore
+        camera_direction = numpy.array(self.camera_direction)
+        current = numpy.array(self.player.position) # type: ignore
+
+        mypos = current + 1.5 * camera_direction
+
         otherpos = numpy.array(game_object.position)
         distance = numpy.linalg.norm(mypos - otherpos)
         direction_vector = (mypos - otherpos) / distance
@@ -473,9 +485,7 @@ class PlayerViewEditor:
         return results
 
 
-
-
-
+    # Sets the Modes and Renders the HUD
     def render_hud(self):
         glDisable(GL_DEPTH_TEST)
         glDepthMask(GL_FALSE)

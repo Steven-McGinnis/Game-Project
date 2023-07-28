@@ -1,258 +1,614 @@
 {
-  "level": {
-    "music": "bgmusic"
-  },
-  "objects": [
-    {
-      "identifier": "player",
-      "kind": "player",
-      "position": [0.0, 0.0, 0.0],
-      "behaviors": {
-        "KeyMove": [0.09],
-        "MouseRotation": [0.1],
-        "BlockedByObjects": [],
-        "Jump": [0.5, 0.05],
-        "Gravity": [0.1],
-        "GainSpeed": []
-      }
+    "behaviors": {
+        "BlockedByObjects": "behavior_collision",
+        "DeleteOnCollision": "behavior_delete_on_collision",
+        "Disappear": "behavior_disappear",
+        "EnableHighlight": "behavior_highlight",
+        "Friction": "behavior_friction",
+        "GainSpeed": "behavior_gain_speed",
+        "Goto": "behavior_goto",
+        "GotoSupervisor": "behavior_goto_sup",
+        "Gravity": "behavior_gravity",
+        "HighlightColor": "behavior_highlight",
+        "IceSlide": "behavior_ice",
+        "Jump": "behavior_jump",
+        "KeyMove": "behavior_key_move",
+        "MouseRotation": "behavior_mouse_rotation",
+        "Movie": "behavior_movie",
+        "Pickup": "behavior_pickup",
+        "Portal": "behavior_portal",
+        "PowerUpBob": "behavior_power_up",
+        "Switch": "behavior_switch",
+        "XRotation": "behavior_x_rotation",
+        "YRotation": "behavior_y_rotation",
+        "ZRotation": "behavior_z_rotation"
     },
-    {
-      "kind": "cube",
-      "position": [0.0, 0.0, -10.0],
-      "size": [0.5, 0.5, 0.5],
-      "identifier": "portal",
-      "behaviors": {
-        "XRotation": [0.1],
-        "Portal": [],
-        "DeleteOnCollision": []
-      }
+    "files": {
+        "bgmusic": "./sounds/background_music.mp3",
+        "enemy": "./textures/enemy.jpg",
+        "portal": "./sounds/portal.wav",
+        "rock": "./textures/rock.jpg",
+        "unlock": "./sounds//unlock.wav",
+        "yfa": "./videos/yfa.mp4"
     },
-    {
-      "kind": "world",
-      "position": [0.0, -1.0, 0.0],
-      "size": [100.0, 1.0, 100.0],
-      "texture": "./textures/grassSeamless.png"
+    "level": {
+        "music": "bgmusic"
     },
-    {
-      "kind": "cube",
-      "position": [0.0, 0.0, -5.0],
-      "size": [10.0, 1.5, 0.1],
-      "texture": "./textures/outerwall.jpg",
-      "Note": "Front Wall"
-    },
-    {
-      "kind": "cube",
-      "position": [0.0, 1.5, -5.0],
-      "size": [10.0, 1.5, 0.1],
-      "texture": "./textures/outerwall.jpg",
-      "Note": "Front Wall top half"
-    },
-    {
-      "kind": "cube",
-      "position": [0.0, 0.0, -15.0],
-      "size": [10.0, 1.5, 0.1],
-      "texture": "./textures/outerwall.jpg",
-      "Note": "Back Wall"
-    },
-    {
-      "kind": "cube",
-      "position": [0.0, 1.5, -15.0],
-      "size": [10.0, 1.5, 0.1],
-      "texture": "./textures/outerwall.jpg",
-      "Note": "Back Wall Top Half"
-    },
-    {
-      "kind": "cube",
-      "position": [5.0, 0.0, -10.0],
-      "size": [0.1, 1.5, 10.0],
-      "texture": "./textures/outerwall.jpg",
-      "Note": "Right Wall"
-    },
-    {
-      "kind": "cube",
-      "position": [5.0, 1.5, -6],
-      "size": [0.1, 1.5, 2.0],
-      "texture": "./textures/outerwall.jpg",
-      "Note": "Right Wall Top Half Piece"
-    },
-    {
-      "kind": "cube",
-      "position": [5.0, 1.5, -12.0],
-      "size": [0.1, 1.5, 6.0],
-      "texture": "./textures/outerwall.jpg",
-      "Note": "Right Wall Top Half Piece"
-    },
-    {
-      "kind": "cube",
-      "position": [-5.0, 0.0, -12.0],
-      "size": [0.1, 1.5, 6.0],
-      "texture": "./textures/outerwall.jpg"
-    },
-    {
-      "kind": "cube",
-      "position": [-5.0, 0.0, -6],
-      "size": [0.1, 1.5, 2.0],
-      "texture": "./textures/outerwall.jpg"
-    },
-    {
-      "kind": "cube",
-      "position": [5.4, -0.3, -6],
-      "size": [0.5, 0.5, 0.5],
-      "texture": "./textures/plank.jpg"
-    },
-    {
-      "kind": "cube",
-      "position": [5.4, -0.1, -6.5],
-      "size": [0.5, 0.5, 0.5],
-      "texture": "./textures/plank.jpg"
-    },
-    {
-      "kind": "cube",
-      "position": [5.4, 0.5, -7],
-      "size": [0.5, 0.5, 0.5],
-      "texture": "./textures/plank.jpg"
-    },
-    {
-      "kind": "cube",
-      "position": [-5.0, 1.5, -10.0],
-      "size": [0.1, 1.5, 10.0],
-      "texture": "./textures/outerwall.jpg",
-      "Note": "Right Wall"
-    },
-    {
-      "kind": "cube",
-      "position": [0.0, -0.5, -10.0],
-      "size": [10.0, 0.01, 10],
-      "texture": "./textures/woodfloor.jpg"
-    },
-    {
-      "kind": "cube",
-      "position": [0.0, 0.75, -10.0],
-      "size": [10.0, 0.01, 10],
-      "texture": "./textures/woodfloor.jpg"
-    },
-    {
-      "kind": "cube",
-      "position": [0.0, 3.0, -7],
-      "size": [10.0, 0.01, 6.5],
-      "rotation": [20.0, 0.0, 0.0],
-      "texture": "./textures/brick.jpg"
-    },
-    {
-      "kind": "cube",
-      "position": [0.0, 3.0, -13],
-      "size": [10.0, 0.01, 6.5],
-      "rotation": [-20.0, 0.0, 0.0],
-      "texture": "./textures/brick.jpg"
-    },
-    {
-      "kind": "sphere",
-      "position": [8.0, 0.0, -5.0],
-      "size": [0.5, 0.5, 0.5],
-      "texture": "./textures/orbTexture2.png",
-      "identifier": "power_up",
-      "behaviors": {
-        "PowerUpBob": [0.1, 5]
-      }
-    },
-    {
-      "kind": "cube",
-      "position": [0.0, 0.0, -3],
-      "size": [0.5, 0.5, 0.5],
-      "texture": "./textures/ammo.jpg",
-      "identifier": "key1",
-      "behaviors": {
-        "Pickup": ["key1", true]
-      }
-    },
-    {
-      "identifier": "switch1",
-      "kind": "cube",
-      "position": [2.0, 0.0, -3.0],
-      "size": [0.5, 0.5, 0.5],
-      "behaviors": {
-        "Switch": ["key1", true, "unlocked", true],
-        "Disappear": ["unlocked", true, "unlock"]
-      }
-    },
-    {
-      "identifier": "key2",
-      "kind": "cube",
-      "position": [2.0, 1.1, -8.0],
-      "size": [0.5, 0.5, 0.5],
-      "texture": "./textures/switch.png",
-      "behaviors": {
-        "Pickup": ["key2", true]
-      }
-    },
-    {
-      "identifier": "switch2",
-      "kind": "cube",
-      "position": [-5.0, 0.0, -8.0],
-      "size": [0.5, 1.5, 2],
-      "texture": "./textures//door.jpg",
-      "behaviors": {
-        "Switch": ["key2", true, "unlocked", true],
-        "Disappear": ["unlocked", true, "unlock"]
-      }
-    },
-    {
-      "kind": "cube",
-      "position": [20.0, 0.0, -10.0],
-      "size": [0.25, 0.25, 0.25],
-      "texture": "./textures/enemy.jpg",
-      "identifier": "enemy",
-      "behaviors": {
-        "Goto": ["key1", 0.05, 1.0, "goto1"],
-        "BlockedByObjects": [],
-        "Gravity": [0.1],
-        "GotoSupervisor": [
-          "goto1",
-          [["clicked-key1", "switch1"], ["clicked-switch1"]]
-        ]
-      }
-    },
-    {
-      "kind": "cube2",
-      "position": [-4.0, 0.0, -3.0],
-      "size": [0.5, 0.5, 0.5],
-      "faces": {"top": {"type": "movie", "value": "yfa"}, "back": {"type": "movie", "value": "yfa"}, "left": {"type": "movie", "value": "yfa"}, "right": {"type": "movie", "value": "yfa"}, "front": {"type": "movie", "value": "yfa"}, "bottom":{"type": "movie", "value": "yfa"}},
-      "behaviors": {
-        "EnableHighlight" : [],
-        "HighlightColor" : [[0.0, 1.0, 0.0]]
-      }
-    }
-  ],
-  "files": {
-    "enemy": "./textures/enemy.jpg",
-    "unlock": "./sounds//unlock.wav",
-    "bgmusic": "./sounds/background_music.mp3",
-    "portal": "./sounds/portal.wav",
-    "rock": "./textures/rock.jpg",
-    "yfa": "./videos/yfa.mp4"
-  },
-  "behaviors": {
-    "KeyMove": "behavior_key_move",
-    "MouseRotation": "behavior_mouse_rotation",
-    "BlockedByObjects": "behavior_collision",
-    "Gravity": "behavior_gravity",
-    "XRotation": "behavior_x_rotation",
-    "YRotation": "behavior_y_rotation",
-    "ZRotation": "behavior_z_rotation",
-    "PowerUpBob": "behavior_power_up",
-    "Jump": "behavior_jump",
-    "GainSpeed": "behavior_gain_speed",
-    "Portal": "behavior_portal",
-    "Friction": "behavior_friction",
-    "IceSlide": "behavior_ice",
-    "Pickup": "behavior_pickup",
-    "Switch": "behavior_switch",
-    "Disappear": "behavior_disappear",
-    "DeleteOnCollision": "behavior_delete_on_collision",
-    "Goto": "behavior_goto",
-    "GotoSupervisor": "behavior_goto_sup",
-    "Movie": "behavior_movie",
-    "EnableHighlight": "behavior_highlight",
-    "HighlightColor": "behavior_highlight"
-  }
+    "objects": [
+        {
+            "behaviors": {
+                "BlockedByObjects": [],
+                "GainSpeed": [],
+                "Gravity": [
+                    0.1
+                ],
+                "Jump": [
+                    0.5,
+                    0.05
+                ],
+                "KeyMove": [
+                    0.09
+                ],
+                "MouseRotation": [
+                    0.1
+                ]
+            },
+            "identifier": "player",
+            "kind": "player",
+            "position": [
+                -0.8732109092280861,
+                0.0,
+                1.4379874513043645
+            ],
+            "rotation": [
+                -0.19999999999999823,
+                -205.50000000000006,
+                0
+            ],
+            "size": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "behaviors": {
+                "DeleteOnCollision": [],
+                "Portal": [],
+                "XRotation": [
+                    0.1
+                ]
+            },
+            "identifier": "portal",
+            "kind": "cube",
+            "position": [
+                0.0,
+                0.0,
+                -10.0
+            ],
+            "size": [
+                0.5,
+                0.5,
+                0.5
+            ]
+        },
+        {
+            "behaviors": {},
+            "kind": "world",
+            "position": [
+                0.0,
+                -1.0,
+                0.0
+            ],
+            "size": [
+                100.0,
+                1.0,
+                100.0
+            ],
+            "texture": "./textures/grassSeamless.png"
+        },
+        {
+            "behaviors": {},
+            "kind": "cube",
+            "position": [
+                0.0,
+                0.0,
+                -5.0
+            ],
+            "size": [
+                10.0,
+                1.5,
+                0.1
+            ],
+            "texture": "./textures/outerwall.jpg"
+        },
+        {
+            "behaviors": {},
+            "kind": "cube",
+            "position": [
+                0.0,
+                1.5,
+                -5.0
+            ],
+            "size": [
+                10.0,
+                1.5,
+                0.1
+            ],
+            "texture": "./textures/outerwall.jpg"
+        },
+        {
+            "behaviors": {},
+            "kind": "cube",
+            "position": [
+                0.0,
+                0.0,
+                -15.0
+            ],
+            "size": [
+                10.0,
+                1.5,
+                0.1
+            ],
+            "texture": "./textures/outerwall.jpg"
+        },
+        {
+            "behaviors": {},
+            "kind": "cube",
+            "position": [
+                0.0,
+                1.5,
+                -15.0
+            ],
+            "size": [
+                10.0,
+                1.5,
+                0.1
+            ],
+            "texture": "./textures/outerwall.jpg"
+        },
+        {
+            "behaviors": {},
+            "kind": "cube",
+            "position": [
+                5.0,
+                0.0,
+                -10.0
+            ],
+            "size": [
+                0.1,
+                1.5,
+                10.0
+            ],
+            "texture": "./textures/outerwall.jpg"
+        },
+        {
+            "behaviors": {},
+            "kind": "cube",
+            "position": [
+                5.0,
+                1.5,
+                -6
+            ],
+            "size": [
+                0.1,
+                1.5,
+                2.0
+            ],
+            "texture": "./textures/outerwall.jpg"
+        },
+        {
+            "behaviors": {},
+            "kind": "cube",
+            "position": [
+                5.0,
+                1.5,
+                -12.0
+            ],
+            "size": [
+                0.1,
+                1.5,
+                6.0
+            ],
+            "texture": "./textures/outerwall.jpg"
+        },
+        {
+            "behaviors": {},
+            "kind": "cube",
+            "position": [
+                -5.0,
+                0.0,
+                -12.0
+            ],
+            "size": [
+                0.1,
+                1.5,
+                6.0
+            ],
+            "texture": "./textures/outerwall.jpg"
+        },
+        {
+            "behaviors": {},
+            "kind": "cube",
+            "position": [
+                -5.0,
+                0.0,
+                -6
+            ],
+            "size": [
+                0.1,
+                1.5,
+                2.0
+            ],
+            "texture": "./textures/outerwall.jpg"
+        },
+        {
+            "behaviors": {},
+            "kind": "cube",
+            "position": [
+                5.4,
+                -0.3,
+                -6
+            ],
+            "size": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "texture": "./textures/plank.jpg"
+        },
+        {
+            "behaviors": {},
+            "kind": "cube",
+            "position": [
+                5.4,
+                -0.1,
+                -6.5
+            ],
+            "size": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "texture": "./textures/plank.jpg"
+        },
+        {
+            "behaviors": {},
+            "kind": "cube",
+            "position": [
+                5.4,
+                0.5,
+                -7
+            ],
+            "size": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "texture": "./textures/plank.jpg"
+        },
+        {
+            "behaviors": {},
+            "kind": "cube",
+            "position": [
+                -5.0,
+                1.5,
+                -10.0
+            ],
+            "size": [
+                0.1,
+                1.5,
+                10.0
+            ],
+            "texture": "./textures/outerwall.jpg"
+        },
+        {
+            "behaviors": {},
+            "kind": "cube",
+            "position": [
+                0.0,
+                -0.5,
+                -10.0
+            ],
+            "size": [
+                10.0,
+                0.01,
+                10
+            ],
+            "texture": "./textures/woodfloor.jpg"
+        },
+        {
+            "behaviors": {},
+            "kind": "cube",
+            "position": [
+                0.0,
+                0.75,
+                -10.0
+            ],
+            "size": [
+                10.0,
+                0.01,
+                10
+            ],
+            "texture": "./textures/woodfloor.jpg"
+        },
+        {
+            "behaviors": {},
+            "kind": "cube",
+            "position": [
+                0.0,
+                3.0,
+                -7
+            ],
+            "rotation": [
+                20.0,
+                0.0,
+                0.0
+            ],
+            "size": [
+                10.0,
+                0.01,
+                6.5
+            ],
+            "texture": "./textures/brick.jpg"
+        },
+        {
+            "behaviors": {},
+            "kind": "cube",
+            "position": [
+                0.0,
+                3.0,
+                -13
+            ],
+            "rotation": [
+                -20.0,
+                0.0,
+                0.0
+            ],
+            "size": [
+                10.0,
+                0.01,
+                6.5
+            ],
+            "texture": "./textures/brick.jpg"
+        },
+        {
+            "behaviors": {
+                "PowerUpBob": [
+                    0.1,
+                    5
+                ]
+            },
+            "identifier": "power_up",
+            "kind": "sphere",
+            "position": [
+                8.0,
+                0.0,
+                -5.0
+            ],
+            "size": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "texture": "./textures/orbTexture2.png"
+        },
+        {
+            "behaviors": {
+                "Pickup": [
+                    "key1",
+                    true
+                ]
+            },
+            "identifier": "key1",
+            "kind": "cube",
+            "position": [
+                0.0,
+                0.0,
+                -3
+            ],
+            "size": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "texture": "./textures/ammo.jpg"
+        },
+        {
+            "behaviors": {
+                "Disappear": [
+                    "unlocked",
+                    true,
+                    "unlock"
+                ],
+                "Switch": [
+                    "key1",
+                    true,
+                    "unlocked",
+                    true
+                ]
+            },
+            "identifier": "switch1",
+            "kind": "cube",
+            "position": [
+                2.0,
+                0.0,
+                -3.0
+            ],
+            "size": [
+                0.5,
+                0.5,
+                0.5
+            ]
+        },
+        {
+            "behaviors": {
+                "Pickup": [
+                    "key2",
+                    true
+                ]
+            },
+            "identifier": "key2",
+            "kind": "cube",
+            "position": [
+                2.0,
+                1.1,
+                -8.0
+            ],
+            "size": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "texture": "./textures/switch.png"
+        },
+        {
+            "behaviors": {
+                "Disappear": [
+                    "unlocked",
+                    true,
+                    "unlock"
+                ],
+                "Switch": [
+                    "key2",
+                    true,
+                    "unlocked",
+                    true
+                ]
+            },
+            "identifier": "switch2",
+            "kind": "cube",
+            "position": [
+                -5.0,
+                0.0,
+                -8.0
+            ],
+            "size": [
+                0.5,
+                1.5,
+                2
+            ],
+            "texture": "./textures//door.jpg"
+        },
+        {
+            "behaviors": {
+                "BlockedByObjects": [],
+                "Goto": [
+                    "key1",
+                    0.05,
+                    1.0,
+                    "goto1"
+                ],
+                "GotoSupervisor": [
+                    "goto1",
+                    [
+                        [
+                            "clicked-key1",
+                            "switch1"
+                        ],
+                        [
+                            "clicked-switch1"
+                        ]
+                    ]
+                ],
+                "Gravity": [
+                    0.1
+                ]
+            },
+            "identifier": "enemy",
+            "kind": "cube",
+            "position": [
+                20.0,
+                0.0,
+                -10.0
+            ],
+            "size": [
+                0.25,
+                0.25,
+                0.25
+            ],
+            "texture": "./textures/enemy.jpg"
+        },
+        {
+            "behaviors": {
+                "EnableHighlight": [],
+                "HighlightColor": [
+                    [
+                        0.0,
+                        1.0,
+                        0.0
+                    ]
+                ]
+            },
+            "faces": {
+                "back": {
+                    "type": "movie",
+                    "value": "yfa"
+                },
+                "bottom": {
+                    "type": "movie",
+                    "value": "yfa"
+                },
+                "front": {
+                    "type": "movie",
+                    "value": "yfa"
+                },
+                "left": {
+                    "type": "movie",
+                    "value": "yfa"
+                },
+                "right": {
+                    "type": "movie",
+                    "value": "yfa"
+                },
+                "top": {
+                    "type": "movie",
+                    "value": "yfa"
+                }
+            },
+            "kind": "cube2",
+            "position": [
+                -4.0,
+                0.0,
+                -3.0
+            ],
+            "size": [
+                0.5,
+                0.5,
+                0.5
+            ]
+        },
+        {
+            "behaviors": {},
+            "faces": {
+                "back": {
+                    "type": "texture",
+                    "value": "rock"
+                },
+                "front": {
+                    "type": "texture",
+                    "value": "rock"
+                },
+                "left": {
+                    "type": "texture",
+                    "value": "rock"
+                },
+                "right": {
+                    "type": "texture",
+                    "value": "rock"
+                }
+            },
+            "kind": "cube2",
+            "position": [
+                1,
+                0,
+                4
+            ],
+            "size": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    ]
 }
