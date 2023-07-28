@@ -50,7 +50,6 @@ class PlayerView:
 
     def create_hud_variables(self):
         self.health = 100
-        self.stamina = 100
         self.ammo = 20
         self.health_texture = glGenTextures(1)
         self.stamina_texture = glGenTextures(1)
@@ -62,11 +61,6 @@ class PlayerView:
             _("Health: ") + str(self.health), True, (255, 0, 0), (0, 0, 0, 0)
         )
         self.update_texture(img, self.health_texture)
-
-        img = pygame.font.SysFont("Arial", 25).render(
-            _("Stamina: ") + str(self.stamina), True, (0, 0, 255), (0, 0, 0, 0)
-        )
-        self.update_texture(img, self.stamina_texture)
 
         img = pygame.font.SysFont("Arial", 25).render(
             _("Ammo: ") + str(self.ammo), True, (0, 255, 0), (0, 0, 0, 0)
@@ -159,9 +153,6 @@ class PlayerView:
             if keypress[pygame.K_d]:
                 pub.sendMessage("key-d")
 
-            if keypress[pygame.K_LSHIFT]:
-                self.use_stamina(1)
-
             pub.sendMessage("rotate-y", amount=mouseMove[0])
             pub.sendMessage("rotate-x", amount=mouseMove[1])
 
@@ -174,10 +165,6 @@ class PlayerView:
                     -self.player.position[2],
                 )
                 self.viewMatrix = glGetFloatv(GL_MODELVIEW_MATRIX)
-
-            if keypress[pygame.K_LSHIFT] == False and self.stamina < 100:
-                self.recover_stamina(1)
-
 
             self.enable_lighting()
 
@@ -329,13 +316,9 @@ class PlayerView:
         glBindTexture(GL_TEXTURE_2D, self.health_texture)
         self.render_text_quad(10, self.window_height - 40)
 
-        # Render Stamina
-        glBindTexture(GL_TEXTURE_2D, self.stamina_texture)
-        self.render_text_quad(10, self.window_height - 80)
-
         # Render Ammo
         glBindTexture(GL_TEXTURE_2D, self.ammo_texture)
-        self.render_text_quad(10, self.window_height - 120)
+        self.render_text_quad(10, self.window_height - 80)
         
 
         glDisable(GL_TEXTURE_2D)
@@ -439,10 +422,9 @@ class PlayerView:
 
         # check if the cooldown period has passed
         if current_time - self.last_ammo_update < self.cooldown_period:
-            print("Too quick! Wait for the cooldown period.")
             return
 
-        self.ammo += 21
+        self.ammo += 10
         self.update_health_stamina_textures()
         self.last_ammo_update = current_time
 
