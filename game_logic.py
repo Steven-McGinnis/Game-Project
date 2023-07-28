@@ -89,7 +89,7 @@ class GameLogic:
             GameLogic.save_object(GameLogic.game_objects[game_object])
 
         with open(GameLogic.filename, "w") as outfile:  # type: ignore
-            json.dump(GameLogic.level_data, outfile, sort_keys=True, indent=4)
+            outfile.write(GameLogic.jsonprint(GameLogic.level_data))
 
     @staticmethod
     def save_object(game_object):
@@ -205,3 +205,34 @@ class GameLogic:
         if other.identifier in ["power_up", "portal", "inverse"]:
             print(other.identifier, other.identifier)
             pub.sendMessage("collision", obj=other)
+
+    @staticmethod
+    def replace(data):
+        import uuid
+
+        replacements = []
+        objects = []
+
+        for obj in data["objects"]:
+            replacement = uuid.uuid4().hex
+            replacements.append((f'"{replacement}"', json.dumps(obj)))
+
+            objects.append(f"{replacement}")
+
+        data["objects"] = objects
+
+        return data, replacements
+
+    @staticmethod
+    def jsonprint(data):
+        import copy
+
+        data = copy.deepcopy(data)
+
+        data, replacements = GameLogic.replace(data)
+        result = json.dumps(data, indent=4)
+
+        for old, new in replacements:
+            result = result.replace(old, new)
+
+        return result
